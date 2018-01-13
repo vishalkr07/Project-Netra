@@ -36,6 +36,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -54,6 +55,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Listen.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Listen.Designer.cs">
+      <DependentUpon>Listen.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Speak.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Speak.Designer.cs">
+      <DependentUpon>Speak.cs</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
