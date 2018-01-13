@@ -23,6 +23,10 @@ namespace ProjectNetra
         public MainWindow()
         {
             InitializeComponent();
+
         }
+
+
     }
+    
 }
