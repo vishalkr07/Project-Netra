@@ -5,9 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProjectNetra"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525"
-        WindowStyle="None">
-    <Grid>
-        
+        Title="MainWindow" Height="156.439" Width="597.917"
+        WindowStyle="None"
+        Background="#FF040C33" Opacity="0.9">
+    <Grid ScrollViewer.CanContentScroll="True">
+
+        <TextBlock HorizontalAlignment="Left" Margin="10,60,0,0" TextWrapping="Wrap" Text="Output:"   VerticalAlignment="Top" FontWeight="Bold" FontSize="16" Foreground="#FF17AC68"/>
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="52" Margin="10,86,0,0" VerticalAlignment="Top" Width="570">
+            <TextBlock x:Name="Output_BLock" TextWrapping="Wrap" Text="" Background="White" Foreground="Black" Padding="4,4,4,4" FontSize="16"/>
+        </Border>
+        <Button Content="Speak" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+
     </Grid>
 </Window>
