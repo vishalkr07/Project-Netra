@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ProjectNetra
 {
-    public class MyThread
+    public class MyThread                                                               // Class that contains all functions that are to be run in different threads
     {
         public static void T1()
         {

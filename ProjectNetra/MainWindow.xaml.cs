@@ -27,11 +27,7 @@ namespace ProjectNetra
             Thread thr1 = new Thread(new ThreadStart(MyThread.T1));
             thr1.Start();
         }
-
-        public void showOutput(string outputString)                       // For showing output
-        {
-            Output_BLock.Text = outputString;
-        }
+        
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {

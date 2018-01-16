@@ -59,6 +59,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="MyThread.cs" />
+    <Compile Include="Open_Close.cs" />
     <Compile Include="Speak_Listen.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
