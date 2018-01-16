@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -23,10 +23,18 @@ namespace ProjectNetra
         public MainWindow()
         {
             InitializeComponent();
-
+            Speak_Listen.Initialize();
+            Thread thr1 = new Thread(new ThreadStart(MyThread.T1));
+            thr1.Start();
         }
+        
 
-
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            //Thread thr2 = new Thread(new ParameterizedThreadStart(MyThread.T2));
+            //thr2.Start("Hi I am Cortan, husband of Cortana.");
+        }
     }
-    
+
+        
 }
