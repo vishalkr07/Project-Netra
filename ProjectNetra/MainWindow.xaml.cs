@@ -12,6 +12,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Interop;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using Microsoft.Win32;
 
 namespace ProjectNetra
 {
@@ -20,20 +24,53 @@ namespace ProjectNetra
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        
+        public MainWindow()                                                     // Defines what to be done with assisstant start up          
         {
             InitializeComponent();
-            Speak_Listen.Initialize();
-            Thread thr1 = new Thread(new ThreadStart(MyThread.T1));
-            thr1.Start();
+            Test.Initialize();
+            
         }
-        
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            //Thread thr2 = new Thread(new ParameterizedThreadStart(MyThread.T2));
-            //thr2.Start("Hi I am Cortan, husband of Cortana.");
+            Test.Speak("Hi Jerwin Mistry, how are you!. I am bla bla bla bla bla abla ahbf uadhfu duuafnjnjd jnjfn");
         }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            Test.Speak("Fuck off I am working!");
+            //Test.Speak(" Souvik you are going in the right way. Have confidence and proceed!");
+            /*Process[] pr = Process.GetProcesses();
+            foreach (var p in pr)
+            {
+                Debug.WriteLine("@@@  "+ p.ProcessName);
+            }*/
+        }
+
+        private void OnContentLoaded(object sender,EventArgs e) {
+            Test.Speak("Hi I am your blind assistant!");
+            
+            Test.Listen();
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            Volume_Control.VolumeUp();
+        }
+
+        private void Button_Click_3(object sender, RoutedEventArgs e)
+        {
+            Volume_Control.VolumeDown();
+        }
+
+        private void Button_Click_4(object sender, RoutedEventArgs e)
+        {
+            Volume_Control.Mute(); 
+        }
+
+        
+        
     }
 
         
