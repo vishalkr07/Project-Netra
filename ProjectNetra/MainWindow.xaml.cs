@@ -49,10 +49,7 @@ namespace ProjectNetra
             Pdf_Reader.Pdf2Speech("numbertheory");
         }
 
-        private void OnContentLoaded(object sender,EventArgs e) {
-            Test.Speak("Hi I am your blind assistant!");
-            Test.Listen();
-        }
+        
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
@@ -71,9 +68,7 @@ namespace ProjectNetra
 
         private void Button_Click_5(object sender, RoutedEventArgs e)
         {
-            Media_Player mp = new Media_Player();
-            mp.Show();
-            Test.MPInit(mp);
+
         }
     }
 
