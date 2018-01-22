@@ -8,10 +8,12 @@ namespace ProjectNetra
 
         public static void VolumeUp()
         {
+            defaultPlaybackDevice.Mute(false);
             defaultPlaybackDevice.Volume += 2;
         }
         public static void VolumeDown()
         {
+            defaultPlaybackDevice.Mute(false);
             defaultPlaybackDevice.Volume -= 2;
         }
         public static void Mute()
