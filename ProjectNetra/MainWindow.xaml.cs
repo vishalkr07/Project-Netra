@@ -28,30 +28,31 @@ namespace ProjectNetra
         public MainWindow()                                                     // Defines what to be done with assisstant start up          
         {
             InitializeComponent();
-            Test.Initialize();
-            
+            Speak_Listen.Initialize();
+            Speak_Listen.Initialize();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Test.Speak("Hi Jerwin Mistry, how are you!. I am bla bla bla bla bla abla ahbf uadhfu duuafnjnjd jnjfn");
+            Speak_Listen.Speak("Hi Jerwin Mistry, how are you!. I am bla bla bla bla bla abla ahbf uadhfu duuafnjnjd jnjfn");
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            Test.Speak("Fuck off I am working!");
-            //Test.Speak(" Souvik you are going in the right way. Have confidence and proceed!");
+            //Speak_Listen.Speak("Fuck off I am working!");
+            //Speak_Listen.Speak(" Souvik you are going in the right way. Have confidence and proceed!");
             /*Process[] pr = Process.GetProcesses();
             foreach (var p in pr)
             {
                 Debug.WriteLine("@@@  "+ p.ProcessName);
             }*/
+            Pdf_Reader.Pdf2Speech("numbertheory");
         }
 
         private void OnContentLoaded(object sender,EventArgs e) {
-            Test.Speak("Hi I am your blind assistant!");
+            Speak_Listen.Speak("Hi I am your blind assistant!");
             
-            Test.Listen();
+            //Speak_Listen.Listen();
         }
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
