@@ -21,9 +21,8 @@ namespace ProjectNetra
         {
             GrammarBuilder builder = new GrammarBuilder();
 
-            Choices cityChoice = new Choices(new string[]                        // Commands for interacting with the Assistant
-            {"Open Browser", "Help", "Menu", "Search Computer","Send mail","Show Inbox","Close all","Status","Increase Volume","Shut down"});
-            
+            Choices cityChoice = new Choices(ProjectResource.AssistantCommandList);
+
             builder.Append(cityChoice);
 
             Grammar citiesGrammar = new Grammar(builder);

@@ -88,8 +88,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="File_Manager.xaml.cs">
-      <DependentUpon>File_Manager.xaml</DependentUpon>
+
     </Compile>
     <Compile Include="MyThread.cs" />
     <Compile Include="Open_Close.cs" />
@@ -116,6 +115,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Media_Player.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

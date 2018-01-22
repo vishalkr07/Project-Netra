@@ -16,30 +16,47 @@ namespace ProjectNetra
         private static SpeechSynthesizer synth = null;
         private static SpeechRecognitionEngine recog = null;
         private static bool completed;                                           // Indicate when an asynchronous operation is finished.
+        private static Media_Player mp = null;
 
+        public static Grammar 
+            MediaPlayerGrammar,
+            AssistantGrammar;
 
-        private static Grammar CreateGrammarBuilderGrammarForAssistant()         // Build Grammars for speech recognition
+        private static void CreateGrammar(ref Grammar g, string[] ar, string name)         // Build Grammars for speech recognition
         {
             GrammarBuilder builder = new GrammarBuilder();
-
-            Choices cityChoice = new Choices(ProjectResource.AssistantCommandList);
+            Choices cityChoice = new Choices(ar);
 
             builder.Append(cityChoice);
 
-            Grammar citiesGrammar = new Grammar(builder);
-            citiesGrammar.Name = "GrammarBuilder Cities Grammar";
+            g = new Grammar(builder);
+            g.Name = name;
+            recog.LoadGrammar(g);
 
-            return citiesGrammar;
+        }
+        private static void LoadAllGrammars()
+        {
+            CreateGrammar(ref AssistantGrammar, ProjectResource.AssistantCommandList, "AssistantGrammar");
+            CreateGrammar(ref MediaPlayerGrammar, ProjectResource.MediaPlayerCommand, "MediaPlayerGrammar");
         }
 
+        public static void EnableGrammar(ref Grammar g, bool b)
+        {
+            g.Enabled = b;
+            recog.RequestRecognizerUpdate();
+        }
 
+        public static void MPInit(Media_Player obj)
+        {
+            mp = obj;
+        }
         public static void Initialize()                                          // Initialize components
         {
             synth = new SpeechSynthesizer();
             synth.SetOutputToDefaultAudioDevice();                               // Configure output to the speech synthesizer.
 
             recog = new SpeechRecognitionEngine(new CultureInfo("en-US"));       // Create an in-process speech recognizer for the en-US locale.
-            recog.LoadGrammar(CreateGrammarBuilderGrammarForAssistant());        // Create and load a grammar.
+            LoadAllGrammars();                                                   // Create and load a grammar.
             recog.SetInputToDefaultAudioDevice();                                // Configure input to the speech recognizer.
 
             recog.SpeechRecognized += new EventHandler<SpeechRecognizedEventArgs>(SpeechRecognizedHandler);         // Attach event handlers for recognition events.
@@ -66,7 +83,19 @@ namespace ProjectNetra
             }
 
             Debug.WriteLine(" - Grammar Name = {0}; Result Text = {1}", grammarName, resultText);
+            
+            /**************************************************************/
 
+            switch(resultText)
+            {
+                case "Pause":
+                    mp.pausesong();
+                    break;
+                default:
+                    break;
+            }
+
+            /**************************************************************/
         }
 
         private static void SpeechDetectedHandler(object sender, SpeechDetectedEventArgs e)                         // Handle the SpeechDetected event.
