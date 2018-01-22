@@ -28,13 +28,13 @@ namespace ProjectNetra
         public MainWindow()                                                     // Defines what to be done with assisstant start up          
         {
             InitializeComponent();
-            Speak_Listen.Initialize();
+            Test.Initialize();
             Speak_Listen.Initialize();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Speak_Listen.Speak("Hi Jerwin Mistry, how are you!. I am bla bla bla bla bla abla ahbf uadhfu duuafnjnjd jnjfn");
+            Test.Speak("Hi Jerwin Mistry, how are you!. I am bla bla bla bla bla abla ahbf uadhfu duuafnjnjd jnjfn");
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -50,9 +50,8 @@ namespace ProjectNetra
         }
 
         private void OnContentLoaded(object sender,EventArgs e) {
-            Speak_Listen.Speak("Hi I am your blind assistant!");
-            
-            //Speak_Listen.Listen();
+            Test.Speak("Hi I am your blind assistant!");
+            Test.Listen();
         }
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
@@ -70,8 +69,12 @@ namespace ProjectNetra
             Volume_Control.Mute(); 
         }
 
-        
-        
+        private void Button_Click_5(object sender, RoutedEventArgs e)
+        {
+            Media_Player mp = new Media_Player();
+            mp.Show();
+            Test.MPInit(mp);
+        }
     }
 
         

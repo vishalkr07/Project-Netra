@@ -1,0 +1,40 @@
+﻿<Window x:Class="ProjectNetra.Media_Player"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ProjectNetra"
+        mc:Ignorable="d"
+        IsHitTestVisible="True" 
+        Background="#00000000" 
+        ResizeMode="CanMinimize"  
+        IsTabStop="True" 
+        Grid.IsSharedSizeScope="True" 
+        UseLayoutRounding="True" 
+        HorizontalContentAlignment="Center" 
+        WindowStyle="ThreeDBorderWindow" 
+        AllowsTransparency="False" 
+        xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation" 
+        d:DesignHeight="385" 
+        d:DesignWidth="585" 
+        SizeToContent="WidthAndHeight">
+    
+    <Grid  x:Name="mainGrid" Background="#FF0A0A0A" Width="553" Height="334" AllowDrop="True">
+        <Grid x:Name="TabGrid" Background="Black" Margin="0,0,428,0" Height="25" VerticalAlignment="Top">
+            <TextBlock x:Name="NameTextBlock" HorizontalAlignment="Left" VerticalAlignment="Top" Width="121" Height="25" Foreground="White" FontSize="13.333"><Run Text="Media Player "/></TextBlock>
+        </Grid>
+        <MediaElement MediaEnded="mediaElement_MediaEnded" MediaOpened="mediaElement_MediaOpened" LoadedBehavior="Manual" Height="192" HorizontalAlignment="Right" Margin="0,0,98,112" Name="mediaElement" VerticalAlignment="Bottom" Width="383" Opacity="1" AllowDrop="True" Stretch="Uniform" IsMuted="False" />
+        <Button Content="Open" Height="30" HorizontalAlignment="Left" Margin="455,304,0,0" Name="openFileButton" VerticalAlignment="Top" Width="66" Click="openFileButton_Click" Background="#FF030303" Foreground="#FFE8E8E8" />
+        <Button x:Name="stopButton" Content="Stop" Margin="0,304,301,0" Click="stopButton_Click" Background="#FF030303" Foreground="#FFE8E8E8" HorizontalAlignment="Right" Width="65" />
+        <Slider Height="30" HorizontalAlignment="Right" Margin="0,262,32,0" Name="volumeSlider" VerticalAlignment="Top" Width="87" Value="0.5" Maximum="1" SmallChange="0.01" LargeChange="0.1" Background="Black" Foreground="#FFDBDBDB" IsMoveToPointEnabled="True"></Slider>
+        <Button x:Name="pauseButton" Content="Pause" Margin="106,304,0,0" Click="pauseButton_Click" Background="#FF030303" Foreground="#FFE8E8E8" Width="76" HorizontalAlignment="Left" />
+        <Button x:Name="playButton_" Content="Play" HorizontalAlignment="Left" Margin="36,304,0,0" Width="65" Click="playButton__Click" ClipToBounds="True" Background="#FF030303" Foreground="#FFE8E8E8" RenderTransformOrigin="0.25,0.374" />
+        <TextBlock Height="23" HorizontalAlignment="Left" Margin="66,231,0,0" Name="currentTimeTextBlock" Text="00:00" VerticalAlignment="Top" Width="52" Background="Black" Foreground="#FFDBDBDB"></TextBlock>
+        <TextBlock Height="23" HorizontalAlignment="Right" Margin="0,229,86,0" Name="endTimeTextBlock" Text="" VerticalAlignment="Top" Width="66" Background="{x:Null}" Foreground="White" RenderTransformOrigin="0.317,-0.713"></TextBlock>
+        <ProgressBar Height="25" Margin="133,227,0,0" Name="progressBar" VerticalAlignment="Top" Background="Black" Foreground="#FF6B6BDB" HorizontalAlignment="Left" Width="241" BorderBrush="Black" />
+        <Slider PreviewMouseLeftButtonUp="seekSlider_PreviewMouseLeftButtonUp" PreviewMouseLeftButtonDown="seekSlider_PreviewMouseLeftButtonDown" MouseLeftButtonUp="seekSlider_MouseLeftButtonUp" Margin="137,228,0,81" Name="seekSlider" Background="{x:Null}" Foreground="Red" BorderBrush="{x:Null}" HorizontalAlignment="Left" Width="239" IsMoveToPointEnabled="True" TickPlacement="None" SnapsToDevicePixels="False" OpacityMask="{x:Null}" IsManipulationEnabled="True" IsSnapToTickEnabled="False" IsSelectionRangeEnabled="False" IsTabStop="False" AutoToolTipPlacement="None" AllowDrop="False"></Slider>
+        <TextBox Name="TextBox1"   HorizontalAlignment="Left" Height="16" Margin="96,263,0,55" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Background="#FF030303" Foreground="#FFE8E8E8"   Width="328" TextChanged="TextBox1_TextChanged"/>
+        <Button x:Name="Previous" Content="Prev" Margin="0,304,231,0" Click="prevButton_Click" Background="#FF030303" Foreground="#FFE8E8E8" HorizontalAlignment="Right" Width="65" />
+        <Button x:Name="Next" Content="Next" Margin="0,304,149,0" Click="nextButton_Click" Background="#FF030303" Foreground="#FFE8E8E8" HorizontalAlignment="Right" Width="65" />
+    </Grid>
+</Window>
