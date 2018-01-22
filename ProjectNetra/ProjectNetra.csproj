@@ -91,6 +91,7 @@
     <Compile Include="MyThread.cs" />
     <Compile Include="Open_Close.cs" />
     <Compile Include="Pdf_Reader.cs" />
+    <Compile Include="ProjectResource.cs" />
     <Compile Include="Speak_Listen.cs" />
     <Compile Include="Speak_Listen_Emulated.cs" />
     <Compile Include="Test.cs" />
