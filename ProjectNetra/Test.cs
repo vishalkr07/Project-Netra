@@ -10,9 +10,10 @@ using System.Diagnostics;
 
 namespace ProjectNetra
 {
-    public class Speak_Listen                                                    // Class for Listening to User and providing voice output.
+    public class Test
     {
-        private static SpeechSynthesizer synth = null;         
+
+        private static SpeechSynthesizer synth = null;
         private static SpeechRecognitionEngine recog = null;
         private static bool completed;                                           // Indicate when an asynchronous operation is finished.
 
@@ -22,8 +23,8 @@ namespace ProjectNetra
             GrammarBuilder builder = new GrammarBuilder();
 
             Choices cityChoice = new Choices(new string[]                        // Commands for interacting with the Assistant
-            {"Open Browser", "Help", "Menu", "Search Computer","Send mail","Show Inbox","Close all","Status","Increase Volume","Shut down"});
-            
+            {"Madarchod","Bhosriwala","Open Browser", "Help", "Menu", "Search Computer","Send mail","Show Inbox","Close all","Status","Increase Volume","Shut down"});
+
             builder.Append(cityChoice);
 
             Grammar citiesGrammar = new Grammar(builder);
@@ -31,7 +32,7 @@ namespace ProjectNetra
 
             return citiesGrammar;
         }
-        
+
 
         public static void Initialize()                                          // Initialize components
         {
@@ -49,7 +50,7 @@ namespace ProjectNetra
             recog.RecognizeCompleted += new EventHandler<RecognizeCompletedEventArgs>(RecognizeCompletedHandler);
         }
 
-            
+
         private static void SpeechRecognizedHandler(object sender, SpeechRecognizedEventArgs e)                     // Handle the SpeechRecognized event.
         {
             Debug.WriteLine(" In SpeechRecognizedHandler.");
@@ -68,13 +69,13 @@ namespace ProjectNetra
             Debug.WriteLine(" - Grammar Name = {0}; Result Text = {1}", grammarName, resultText);
 
         }
-                
+
         private static void SpeechDetectedHandler(object sender, SpeechDetectedEventArgs e)                         // Handle the SpeechDetected event.
         {
             Debug.WriteLine(" In SpeechDetectedHandler:");
             Debug.WriteLine(" - AudioPosition = {0}", e.AudioPosition);
         }
-        
+
         private static void SpeechHypothesizedHandler(object sender, SpeechHypothesizedEventArgs e)                 // Handle the SpeechHypothesized event.
         {
             Debug.WriteLine(" In SpeechHypothesizedHandler:");
@@ -92,7 +93,7 @@ namespace ProjectNetra
 
             Debug.WriteLine(" - Grammar Name = {0}; Result Text = {1}", grammarName, resultText);
         }
-                
+
         private static void SpeechRecognitionRejectedHandler(object sender, SpeechRecognitionRejectedEventArgs e)   // Handle the SpeechRecognitionRejected event.
         {
             Debug.WriteLine(" In SpeechRecognitionRejectedHandler:");
@@ -110,7 +111,7 @@ namespace ProjectNetra
 
             Debug.WriteLine(" - Grammar Name = {0}; Result Text = {1}", grammarName, resultText);
         }
-                
+
         private static void RecognizeCompletedHandler(object sender, RecognizeCompletedEventArgs e)                 // Handle the RecognizeCompleted event.
         {
             Debug.WriteLine(" In RecognizeCompletedHandler.");
@@ -127,7 +128,7 @@ namespace ProjectNetra
             }
             if (e.InputStreamEnded)
             {
-                Debug.WriteLine(" - AudioPosition = {0}; InputStreamEnded = {1}",e.AudioPosition, e.InputStreamEnded);
+                Debug.WriteLine(" - AudioPosition = {0}; InputStreamEnded = {1}", e.AudioPosition, e.InputStreamEnded);
             }
             if (e.Result != null)
             {
@@ -152,19 +153,19 @@ namespace ProjectNetra
                 Thread.Sleep(333);                                               
             }*/
         }
-        
+
 
 
         public static void Speak(string msg)                                      // Use for Voice Output
         {
-            synth.Pause();                                                       
+            synth.Pause();
             synth.SpeakAsyncCancelAll();
             synth.Resume();
             synth.SpeakAsync(msg);
         }
 
         public static void Close()                                               // Custom function with the aim to release all references before shutdown
-        { 
+        {
             synth.Dispose();
             recog.Dispose();
             /*
@@ -174,8 +175,6 @@ namespace ProjectNetra
              */
             Debug.WriteLine("Assistant is closed!");
         }
-        
-        
-                
+
     }
 }
