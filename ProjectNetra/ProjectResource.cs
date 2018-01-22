@@ -37,5 +37,14 @@ namespace ProjectNetra
             "Close Settings",
             "Close Calculator"
         };
+
+        public static string[] MediaPlayerCommand =
+        {
+            "Play",
+            "Pause",
+            "Stop",
+            "Next",
+            "Previous"
+        };
     }
 }
