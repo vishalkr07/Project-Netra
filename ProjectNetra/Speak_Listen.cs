@@ -22,7 +22,7 @@ namespace ProjectNetra
             GrammarBuilder builder = new GrammarBuilder();
 
             Choices cityChoice = new Choices(new string[]                        // Commands for interacting with the Assistant
-            {"Open Browser", "Help", "Menu", "Search Computer","Send mail","Show Inbox","Close all","Status","Increase Volume","Shut down"});
+            {"Google it", "Help", "Menu", "Search Computer","Send mail","Show Inbox","Close all","Status","Increase Volume","Shut down"});
             
             builder.Append(cityChoice);
 
@@ -147,20 +147,17 @@ namespace ProjectNetra
             completed = false;
             Debug.WriteLine("Starting Recognition.........");
             recog.RecognizeAsync(RecognizeMode.Multiple);
-            /*while (!completed)                                                   // Wait for the operation to complete.
+            while (!completed)                                                   // Wait for the operation to complete.
             {
                 Thread.Sleep(333);                                               
-            }*/
+            }
         }
         
 
 
         public static void Speak(string msg)                                      // Use for Voice Output
         {
-            synth.Pause();                                                       
-            synth.SpeakAsyncCancelAll();
-            synth.Resume();
-            synth.SpeakAsync(msg);
+            synth.Speak(msg);
         }
 
         public static void Close()                                               // Custom function with the aim to release all references before shutdown
@@ -174,7 +171,6 @@ namespace ProjectNetra
              */
             Debug.WriteLine("Assistant is closed!");
         }
-        
         
                 
     }
