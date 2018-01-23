@@ -123,11 +123,22 @@ namespace ProjectNetra
         // start playing song after the choice is made 
         public void startplay()
         {
-            mediaElement.Source = new Uri(l1[SongNo]);
-            TextBox1.Text = l2[SongNo];
-            Thread.Sleep(50);
-            mediaElement.Close();
-            mediaElement.Play();
+            try
+            {
+                mediaElement.Source = new Uri(l1[SongNo]);
+                TextBox1.Text = l2[SongNo];
+                Thread.Sleep(50);
+                mediaElement.Close();
+                mediaElement.Play();
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                Test.Speak("No Files in Your Computer.");
+                Debug.WriteLine(e.Message);
+            } catch(Exception e)
+            {
+                Debug.WriteLine(e.Message);
+            }
         }
 
         //next song
@@ -160,7 +171,7 @@ namespace ProjectNetra
         // getting file names from the music folder
         public void ExtractMusicFiles(string pat)
         {
-            string path = @"C:\Users\User\Music";
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
             string[] ar = Directory.GetFiles(path, pat);
 
             //Debug.WriteLine("@@@@@@@@  " + ar.Length.ToString());

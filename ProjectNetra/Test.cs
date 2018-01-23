@@ -22,7 +22,7 @@ namespace ProjectNetra
             MediaPlayerGrammar,
             AssistantGrammar;
 
-        private static void CreateGrammar(ref Grammar g, string[] ar, string name)         // Build Grammars for speech recognition
+        private static void CreateGrammar(ref Grammar g, string[] ar, string name, bool Enable = false)         // Build Grammars for speech recognition
         {
             GrammarBuilder builder = new GrammarBuilder();
             Choices cityChoice = new Choices(ar);
@@ -31,16 +31,17 @@ namespace ProjectNetra
 
             g = new Grammar(builder);
             g.Name = name;
+            g.Enabled = Enable;
             recog.LoadGrammar(g);
 
         }
         private static void LoadAllGrammars()
         {
-            CreateGrammar(ref AssistantGrammar, ProjectResource.AssistantCommandList, "AssistantGrammar");
+            CreateGrammar(ref AssistantGrammar, ProjectResource.AssistantCommandList, "AssistantGrammar", true);
             CreateGrammar(ref MediaPlayerGrammar, ProjectResource.MediaPlayerCommand, "MediaPlayerGrammar");
         }
 
-        public static void EnableGrammar(ref Grammar g, bool b)
+        private static void EnableGrammar(ref Grammar g, bool b)
         {
             g.Enabled = b;
             recog.RequestRecognizerUpdate();
@@ -48,6 +49,7 @@ namespace ProjectNetra
 
         public static void MPInit(Media_Player obj)
         {
+            EnableGrammar(ref MediaPlayerGrammar, true);
             mp = obj;
         }
         public static void Initialize()                                          // Initialize components
