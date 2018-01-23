@@ -75,6 +75,12 @@ namespace ProjectNetra
             mp.Show();
             Test.MPInit(mp);
         }
+
+        private void Button_Click_6(object sender, RoutedEventArgs e)
+        {
+            File_Manager fm = new File_Manager();
+            fm.Show();
+        }
     }
 
         
