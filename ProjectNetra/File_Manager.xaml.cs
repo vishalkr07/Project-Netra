@@ -49,7 +49,7 @@ namespace ProjectNetra
         public void OnContentLoaded(object src, EventArgs e)
         {
 
-
+            Test.Speak("Here is the list of directories");
         }
 
         public void ReadOutListItems()
