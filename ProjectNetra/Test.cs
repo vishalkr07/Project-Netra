@@ -91,6 +91,27 @@ namespace ProjectNetra
                 case "Pause":
                     mp.pausesong();
                     break;
+                case "Play":
+                    mp.playsong();
+                    break;
+                case "Stop":
+                    mp.stopsong();
+                    break;
+                case "Next":
+                    mp.next();
+                    break;
+                case "Previous":
+                    mp.prev();
+                    break;
+                case "Reapeat On":
+                    mp.RepeatOn();
+                    break;
+                case "Reapeat Off":
+                    mp.RepeatOff();
+                    break;
+                case "open list":
+                    mp.openList();
+                    break;
                 default:
                     break;
             }

@@ -35,6 +35,7 @@
         <Slider PreviewMouseLeftButtonUp="seekSlider_PreviewMouseLeftButtonUp" PreviewMouseLeftButtonDown="seekSlider_PreviewMouseLeftButtonDown" MouseLeftButtonUp="seekSlider_MouseLeftButtonUp" Margin="137,228,0,81" Name="seekSlider" Background="{x:Null}" Foreground="Red" BorderBrush="{x:Null}" HorizontalAlignment="Left" Width="239" IsMoveToPointEnabled="True" TickPlacement="None" SnapsToDevicePixels="False" OpacityMask="{x:Null}" IsManipulationEnabled="True" IsSnapToTickEnabled="False" IsSelectionRangeEnabled="False" IsTabStop="False" AutoToolTipPlacement="None" AllowDrop="False"></Slider>
         <TextBox Name="TextBox1"   HorizontalAlignment="Left" Height="16" Margin="96,263,0,55" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Background="#FF030303" Foreground="#FFE8E8E8"   Width="328" TextChanged="TextBox1_TextChanged"/>
         <Button x:Name="Previous" Content="Prev" Margin="0,304,231,0" Click="prevButton_Click" Background="#FF030303" Foreground="#FFE8E8E8" HorizontalAlignment="Right" Width="65" />
-        <Button x:Name="Next" Content="Next" Margin="0,304,149,0" Click="nextButton_Click" Background="#FF030303" Foreground="#FFE8E8E8" HorizontalAlignment="Right" Width="65" />
+        <Button x:Name="Next" Content="Next" Margin="0,304,163,0" Click="nextButton_Click" Background="#FF030303" Foreground="#FFE8E8E8" HorizontalAlignment="Right" Width="65" />
+        <Button x:Name="Repeat" Content="Repeat" Margin="0,304,99,0" Click="repeatButton_Click" Background="#FF030303" Foreground="#FFE8E8E8" HorizontalAlignment="Right" Width="65" />
     </Grid>
 </Window>

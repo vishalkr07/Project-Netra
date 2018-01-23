@@ -38,6 +38,7 @@ namespace ProjectNetra
         List<string> l2 = new List<string>(); // contains song names 
         public int SongNo;// Current Song No
         public int TotSong;// Total count of Songs
+        bool RepeatFlag = false;
         public Media_Player() 
         {
             InitializeComponent();
@@ -103,9 +104,7 @@ namespace ProjectNetra
         //open the file
         private void openFileButton_Click(object sender, RoutedEventArgs e)
         {
-            getfilenames();
-            print();
-            select();
+            openList();
             //openFile();
 
 
@@ -181,34 +180,11 @@ namespace ProjectNetra
                 Debug.WriteLine((i + 1) + " " + l2[i]);
             }
         }
-        public void openFile()
+        public void openList()
         {
-            Stream checkStream = null;
-            OpenFileDialog dlg = new OpenFileDialog();
-            dlg.InitialDirectory = "C:\\Users\\User\\Music";
-            dlg.Filter = "All Supported File Types(*.mp3,*.wav,*.mpeg,*.wmv,*.avi,*.mp4)|*.mp3;*.wav;*.mpeg;*.wmv;*.avi;*.mp4";
+            print();
+            select();
 
-            // Show open file dialog box 
-            if ((bool)dlg.ShowDialog())
-            {
-
-                try
-                {
-                    if ((checkStream = dlg.OpenFile()) != null)
-                    {
-                        mediaElement.Source = new Uri(dlg.FileName);
-                        TextBox1.Text = System.IO.Path.GetFileName(dlg.FileName);
-                    }
-                    Thread.Sleep(50);
-                    mediaElement.Close();
-                    mediaElement.Play();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
-                }
-            }
-            Debug.WriteLine("$$$$$$$$$$$$  Open finished.");
         }
 
 
@@ -274,7 +250,13 @@ namespace ProjectNetra
         {
             mediaElement.Stop();
             volumeSlider.ValueChanged -= new RoutedPropertyChangedEventHandler<double>(volumeSlider_ValueChanged);
-            next();
+            if(RepeatFlag)
+            {
+                stopsong();
+                playsong();
+            }
+            else
+                next();
 
         }
 
@@ -327,7 +309,7 @@ namespace ProjectNetra
 
 
 
-        //play the file
+        //play the file 
         private void playButton__Click(object sender, RoutedEventArgs e)
         {
             playsong();
@@ -377,6 +359,24 @@ namespace ProjectNetra
         private void nextButton_Click(object sender, RoutedEventArgs e)
         {
             next();
+        }
+        
+        public void RepeatOn()
+        {
+            RepeatFlag = true;
+        }
+        public void RepeatOff()
+        {
+            RepeatFlag = false;
+        }
+        private void repeatButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (RepeatFlag)
+            {
+                RepeatOff();
+            }
+            else
+                RepeatOn();
         }
 
         //stop the song

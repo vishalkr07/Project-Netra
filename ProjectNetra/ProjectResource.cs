@@ -44,7 +44,10 @@ namespace ProjectNetra
             "Pause",
             "Stop",
             "Next",
-            "Previous"
+            "Previous",
+            "Repeat On",
+            "Repeat Off",
+            "Open List"
         };
     }
 }
