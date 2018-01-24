@@ -93,11 +93,11 @@ namespace ProjectNetra
                 if (mediaElement.Position.Hours == 0)
                 {
 
-                    currentTimeTextBlock.Text = min + ":" + sec;
+                    CurrentTimeTextBlock.Text = min + ":" + sec;
                 }
                 else
                 {
-                    currentTimeTextBlock.Text = hours + ":" + min + ":" + sec;
+                    CurrentTimeTextBlock.Text = hours + ":" + min + ":" + sec;
                 }
             }
         }
@@ -235,11 +235,11 @@ namespace ProjectNetra
                 if (mediaElement.NaturalDuration.TimeSpan.Hours == 0)
                 {
 
-                    endTimeTextBlock.Text = min + ":" + sec;
+                    EndTimeTextBlock.Text = min + ":" + sec;
                 }
                 else
                 {
-                    endTimeTextBlock.Text = hours + ":" + min + ":" + sec;
+                    EndTimeTextBlock.Text = hours + ":" + min + ":" + sec;
                 }
 
                 #endregion customizeTime
@@ -400,7 +400,7 @@ namespace ProjectNetra
             mediaElement.Stop();
             seekSlider.Value = 0;
             progressBar.Value = 0;
-            currentTimeTextBlock.Text = "00:00";
+            CurrentTimeTextBlock.Text = "00:00";
         }
 
         //turn volume up-down
