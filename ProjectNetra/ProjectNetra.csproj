@@ -58,10 +58,24 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="File_Manager.xaml.cs">
+      <DependentUpon>File_Manager.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Media_Player.xaml.cs">
+      <DependentUpon>Media_Player.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MyThread.cs" />
     <Compile Include="Open_Close.cs" />
+    <Compile Include="Pdf_Reader.cs" />
+    <Compile Include="ProjectResource.cs" />
     <Compile Include="Speak_Listen.cs" />
     <Compile Include="Speak_Listen_Emulated.cs" />
+    <Compile Include="Test.cs" />
+    <Compile Include="Volume_Control.cs" />
+    <Page Include="File_Manager.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -75,6 +89,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Media_Player.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
