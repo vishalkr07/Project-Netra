@@ -43,25 +43,27 @@ namespace ProjectNetra
         {
             InitializeComponent();
 
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(1);
-            timer.Tick += new EventHandler(timer_Tick);
-            tick = new timerTick(changeStatus);
+            timer = new DispatcherTimer()
+            {
+                Interval = TimeSpan.FromSeconds(1)
+            };
+            timer.Tick += new EventHandler(TimerTick);
+            tick = new timerTick(ChangeStatus);
 
-            getfilenames();
-            print();
-            select();
+            GetFileNames();
+            Print();
+            Select();
 
         }
 
-        void timer_Tick(object sender, EventArgs e)
+        void TimerTick(object sender, EventArgs e)
         {
             Dispatcher.Invoke(tick);
         }
 
 
         //visualize progressBar 
-        void changeStatus()
+        void ChangeStatus()
         {
             if (fileIsPlaying)
             {
@@ -102,26 +104,26 @@ namespace ProjectNetra
 
 
         //open the file
-        private void openFileButton_Click(object sender, RoutedEventArgs e)
+        private void OpenButtonClick(object sender, RoutedEventArgs e)
         {
-            openList();
+            OpenList();
             //openFile();
 
 
         }
         //select song to be played 
-        public void select()
+        public void Select()
         {
             Debug.WriteLine("Select the song NO. You want to play;");
 
             String choice = Console.ReadLine();
             SongNo = 5;
-            startplay();
+            StartPlay();
 
         }
 
         // start playing song after the choice is made 
-        public void startplay()
+        public void StartPlay()
         {
             try
             {
@@ -142,24 +144,24 @@ namespace ProjectNetra
         }
 
         //next song
-        public void next()
+        public void Next()
         {
             if (SongNo == TotSong - 1)
                 SongNo = 0;
             else
                 SongNo += 1;
-            startplay();
+            StartPlay();
         }
         //previous song 
-        public void prev()
+        public void Previous()
         {
             if (SongNo == 0)
                 SongNo = TotSong - 1;
             else
                 SongNo -= 1;
-            startplay();
+            StartPlay();
         }
-        public void getfilenames()
+        public void GetFileNames()
         {
             string[] ar = { "*.mp3", "*.mp4", "*.wav", "*.mpeg", "*.wmv", "*.avi" };
 
@@ -183,7 +185,7 @@ namespace ProjectNetra
                 // Debug.WriteLine(System.IO.Path.GetFileName(name));
             }
         }
-        public void print()
+        public void Print()
         {
             TotSong = l1.Count;
             for (int i = 0; i < TotSong; i++)
@@ -191,25 +193,25 @@ namespace ProjectNetra
                 Debug.WriteLine((i + 1) + " " + l2[i]);
             }
         }
-        public void openList()
+        public void OpenList()
         {
-            print();
-            select();
+            Print();
+            Select();
 
         }
 
 
         //occurs when the file is opened
-        public void mediaElement_MediaOpened(object sender, RoutedEventArgs e)
+        public void MediaElementMediaOpened(object sender, RoutedEventArgs e)
         {
             timer.Start();
             fileIsPlaying = true;
-            openMedia();
+            OpenMedia();
         }
 
 
         //opens media,adds file to playlist and gets file info
-        public void openMedia()
+        public void OpenMedia()
         {
             InitializePropertyValues();
             try
@@ -253,21 +255,21 @@ namespace ProjectNetra
 
             mediaElement.ScrubbingEnabled = true;
 
-            volumeSlider.ValueChanged += new RoutedPropertyChangedEventHandler<double>(volumeSlider_ValueChanged);
+            volumeSlider.ValueChanged += new RoutedPropertyChangedEventHandler<double>(VolumeSliderValueChanged);
         }
 
         //occurs when the file is done playing and plays next song
-        private void mediaElement_MediaEnded(object sender, RoutedEventArgs e)
+        private void MediaElementMediaEnded(object sender, RoutedEventArgs e)
         {
             mediaElement.Stop();
-            volumeSlider.ValueChanged -= new RoutedPropertyChangedEventHandler<double>(volumeSlider_ValueChanged);
+            volumeSlider.ValueChanged -= new RoutedPropertyChangedEventHandler<double>(VolumeSliderValueChanged);
             if(RepeatFlag)
             {
-                stopsong();
+                StopSong();
                 playsong();
             }
             else
-                next();
+                Next();
 
         }
 
@@ -281,28 +283,28 @@ namespace ProjectNetra
 
 
         //seek to desirable position of the file
-        private void seekSlider_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void SeekSliderMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             TimeSpan ts = new TimeSpan(0, 0, 0, 0, (int)seekSlider.Value);
 
-            changePostion(ts);
+            ChangePostion(ts);
         }
 
 
         //mouse down on slide bar in order to seek
-        private void seekSlider_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void SeekSliderPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             isDragging = true;
             fileIsPlaying = false;
         }
 
 
-        private void seekSlider_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void SeekSliderPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (isDragging)
             {
                 TimeSpan ts = new TimeSpan(0, 0, 0, 0, (int)seekSlider.Value);
-                changePostion(ts);
+                ChangePostion(ts);
                 fileIsPlaying = true;
             }
             isDragging = false;
@@ -310,7 +312,7 @@ namespace ProjectNetra
 
 
         //change position of the file
-        void changePostion(TimeSpan ts)
+        void ChangePostion(TimeSpan ts)
         {
             mediaElement.Position = ts;
         }
@@ -321,7 +323,7 @@ namespace ProjectNetra
 
 
         //play the file 
-        private void playButton__Click(object sender, RoutedEventArgs e)
+        private void PlayButtonClick(object sender, RoutedEventArgs e)
         {
             playsong();
         }
@@ -334,12 +336,12 @@ namespace ProjectNetra
         }
 
         //pause the file
-        private void pauseButton_Click(object sender, RoutedEventArgs e)
+        private void PauseButtonClick(object sender, RoutedEventArgs e)
         {
-            pausesong();
+            PauseSong();
         }
         //pause the song
-        public void pausesong()
+        public void PauseSong()
         {
             fileIsPlaying = false;
             mediaElement.Pause();
@@ -347,29 +349,29 @@ namespace ProjectNetra
         }
 
         //stop the file
-        private void stopButton_Click(object sender, RoutedEventArgs e)
+        private void StopButtonClick(object sender, RoutedEventArgs e)
         {
-            stopsong();
+            StopSong();
         }
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void TextBoxTextChanged(object sender, TextChangedEventArgs e)
         {
             // TextBox1.Text = " ";
         }
 
-        private void TextBox1_TextChanged(object sender, TextChangedEventArgs e)
+        private void TextBox1TextChanged(object sender, TextChangedEventArgs e)
         {
 
         }
 
-        private void prevButton_Click(object sender, RoutedEventArgs e)
+        private void PrevButtonClick(object sender, RoutedEventArgs e)
         {
-            prev();
+            Previous();
         }
 
-        private void nextButton_Click(object sender, RoutedEventArgs e)
+        private void NextButtonClick(object sender, RoutedEventArgs e)
         {
-            next();
+            Next();
         }
         
         public void RepeatOn()
@@ -380,7 +382,7 @@ namespace ProjectNetra
         {
             RepeatFlag = false;
         }
-        private void repeatButton_Click(object sender, RoutedEventArgs e)
+        private void RepeatButtonClick(object sender, RoutedEventArgs e)
         {
             if (RepeatFlag)
             {
@@ -391,7 +393,7 @@ namespace ProjectNetra
         }
 
         //stop the song
-        public void stopsong()
+        public void StopSong()
         {
             fileIsPlaying = false;
             timer.Stop();
@@ -402,7 +404,7 @@ namespace ProjectNetra
         }
 
         //turn volume up-down
-        private void volumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void VolumeSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             mediaElement.Volume = volumeSlider.Value;
         }

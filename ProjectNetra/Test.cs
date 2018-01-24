@@ -91,19 +91,19 @@ namespace ProjectNetra
             switch(resultText)
             {
                 case "Pause":
-                    mp.pausesong();
+                    mp.PauseSong();
                     break;
                 case "Play":
                     mp.playsong();
                     break;
                 case "Stop":
-                    mp.stopsong();
+                    mp.StopSong();
                     break;
                 case "Next":
-                    mp.next();
+                    mp.Next();
                     break;
                 case "Previous":
-                    mp.prev();
+                    mp.Previous();
                     break;
                 case "Reapeat On":
                     mp.RepeatOn();
@@ -112,7 +112,7 @@ namespace ProjectNetra
                     mp.RepeatOff();
                     break;
                 case "open list":
-                    mp.openList();
+                    mp.OpenList();
                     break;
                 default:
                     break;
