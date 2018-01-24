@@ -12,6 +12,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Interop;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using Microsoft.Win32;
 
 namespace ProjectNetra
 {
@@ -20,13 +24,13 @@ namespace ProjectNetra
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        
+        public MainWindow()                                                     // Defines what to be done with assisstant start up          
         {
             InitializeComponent();
             Test.Initialize();
             Speak_Listen.Initialize();
         }
-        
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
