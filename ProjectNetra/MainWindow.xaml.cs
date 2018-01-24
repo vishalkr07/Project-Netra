@@ -50,8 +50,8 @@ namespace ProjectNetra
         }
 
         private void OnContentLoaded(object sender,EventArgs e) {
-            Test.Speak("Hi I am your blind assistant!");
-            Test.Listen();
+            //Test.Speak("Hi I am your blind assistant!");
+            //Test.Listen();
         }
 
         private void Button_Click_2(object sender, RoutedEventArgs e)

@@ -11,6 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Diagnostics;
+using System.IO;
 
 namespace ProjectNetra
 {
@@ -19,47 +21,68 @@ namespace ProjectNetra
     /// </summary>
     public partial class File_Manager : Window
     {
-        private static List<Folders> items = null;
-        private static List<string> dirs = null;
+        private File_Manager_Page fmp = null;
+        private Dictionary<File_Manager_Page,File_Manager_Page> next = new Dictionary<File_Manager_Page, File_Manager_Page>();
+        private Dictionary<File_Manager_Page,File_Manager_Page> back = new Dictionary<File_Manager_Page, File_Manager_Page>();
+
         public File_Manager()
         {
             InitializeComponent();
+            fmp = new File_Manager_Page();
+            back[fmp] = null;
+            next[fmp] = null;
+            MainFrame.Navigate(fmp);
+        }
 
-            items = new List<Folders>();
-            dirs = new List<string>();
-
-            string[] drives = Environment.GetLogicalDrives();
-
-            foreach (string dr in drives)
+        private void ButtonBack(object sender, RoutedEventArgs e)
+        {
+            if (back[fmp] == null)
             {
-                dirs.Add(dr);
-                items.Add(new Folders() { Folder = dr });
+                // Acknowledge
+                Debug.WriteLine("You cannot go back.");
+            }
+            else
+            {
+                fmp = back[fmp];
+                MainFrame.Navigate(fmp);
+            }
+        }
+        private void ButtonNext(object sender, RoutedEventArgs e)
+        {
+            if (next[fmp] == null)
+            {
+                // Acknowledge
+                Debug.WriteLine("You cannot go further.");
+            }
+            else
+            {
+                fmp = next[fmp];
+                MainFrame.Navigate(fmp);
             }
 
-            items.Add(new Folders() { Folder = "Documents" });
-            items.Add(new Folders() { Folder = "Desktop" });
-            items.Add(new Folders() { Folder = "Downloads" });
-            items.Add(new Folders() { Folder = "Music" });
-            items.Add(new Folders() { Folder = "Videos" });
-            items.Add(new Folders() { Folder = "Repeat" });
-
-            LB.ItemsSource = items;
         }
-
-        public void OnContentLoaded(object src, EventArgs e)
+        private void ButtonRefresh(object sender, RoutedEventArgs e)
         {
-
-            Test.Speak("Here is the list of directories");
+            MainFrame.Navigate(fmp);
         }
-
-        public void ReadOutListItems()
+        private void ButtonOpen(object sender, RoutedEventArgs e)
         {
-            //Read The Current List.
+            if (fmp.GetSelectedItem() == null)
+            {
+                // Acknowledge
+                Debug.WriteLine("You have not selected any item.");
+            }
+            else
+            {
+                next[fmp] = new File_Manager_Page(fmp.GetSelectedItem());
+                back[next[fmp]] = fmp;
+                fmp = next[fmp];
+                next[fmp] = null;
+                MainFrame.Navigate(fmp);
+            }
+            
         }
     }
 
-    public class Folders
-    {
-        public string Folder { get; set; }
-    }
+    
 }

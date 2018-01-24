@@ -5,20 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProjectNetra"
         mc:Ignorable="d"
-        ContentRendered="OnContentLoaded"
-        Title="File_Manager" Height="300" Width="300">
-    <Grid Margin="10">
-        <ListBox Name="LB" HorizontalContentAlignment="Stretch">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Grid Margin="0,2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="{Binding Folder}" />
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+        Title="File_Manager" Height="515.546" Width="499.16">
+    <Grid Margin="10,10,13,70">
+
+        <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden"/>
+        <Button Content="Back" HorizontalAlignment="Left" Height="36" Margin="0,421,0,-52" VerticalAlignment="Top" Width="57" Background="#FF0086FF" Click="ButtonBack"/>
+        <Button Content="Next" HorizontalAlignment="Left" Height="36" Margin="62,421,0,-52" VerticalAlignment="Top" Width="52" Background="#FF0086FF" Click="ButtonNext"/>
+        <Button Content="Refresh" HorizontalAlignment="Left" Height="36" Margin="119,421,0,-52" VerticalAlignment="Top" Width="61" Background="#FFFFB300" Click="ButtonRefresh"/>
+        <Button Content="Open" HorizontalAlignment="Left" Height="36" Margin="383,421,0,-52" VerticalAlignment="Top" Width="85" Background="#FF2ECF1A" Click="ButtonOpen"/>
+
     </Grid>
 </Window>
