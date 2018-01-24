@@ -91,6 +91,9 @@
     <Compile Include="File_Manager.xaml.cs">
       <DependentUpon>File_Manager.xaml</DependentUpon>
     </Compile>
+    <Compile Include="File_Manager_Page.xaml.cs">
+      <DependentUpon>File_Manager_Page.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Media_Player.xaml.cs">
       <DependentUpon>Media_Player.xaml</DependentUpon>
     </Compile>
@@ -103,6 +106,10 @@
     <Compile Include="Test.cs" />
     <Compile Include="Volume_Control.cs" />
     <Page Include="File_Manager.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="File_Manager_Page.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -142,9 +149,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
