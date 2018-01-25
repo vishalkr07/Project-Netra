@@ -36,6 +36,23 @@ namespace ProjectNetra
 
         private void ButtonBack(object sender, RoutedEventArgs e)
         {
+            Back();
+        }
+        private void ButtonNext(object sender, RoutedEventArgs e)
+        {
+            Next();
+        }
+        private void ButtonRefresh(object sender, RoutedEventArgs e)
+        {
+            Repeat();
+        }
+        private void ButtonOpen(object sender, RoutedEventArgs e)
+        {
+            Open();            
+        }
+
+        public void Back()
+        {
             if (back[fmp] == null)
             {
                 // Acknowledge
@@ -47,7 +64,8 @@ namespace ProjectNetra
                 MainFrame.Navigate(fmp);
             }
         }
-        private void ButtonNext(object sender, RoutedEventArgs e)
+
+        public void Next()
         {
             if (next[fmp] == null)
             {
@@ -59,13 +77,12 @@ namespace ProjectNetra
                 fmp = next[fmp];
                 MainFrame.Navigate(fmp);
             }
-
         }
-        private void ButtonRefresh(object sender, RoutedEventArgs e)
+        public void Repeat()
         {
             MainFrame.Navigate(fmp);
         }
-        private void ButtonOpen(object sender, RoutedEventArgs e)
+        public void Open()
         {
             if (fmp.GetSelectedItem() == null)
             {
@@ -80,7 +97,6 @@ namespace ProjectNetra
                 next[fmp] = null;
                 MainFrame.Navigate(fmp);
             }
-            
         }
     }
 
