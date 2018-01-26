@@ -34,7 +34,7 @@ namespace ProjectNetra
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Speak_Listen.Speak("Hi Jerwin Mistry, how are you!. I am bla bla bla bla bla abla ahbf uadhfu duuafnjnjd jnjfn");
+            Speak_Listen.Speak("Hi Jerwin Mistry, how are you!");
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)

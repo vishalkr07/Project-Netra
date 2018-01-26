@@ -17,6 +17,7 @@ namespace ProjectNetra
         private static SpeechRecognitionEngine recog = null;
         private static bool completed;                                           // Indicate when an asynchronous operation is finished.
         private static Media_Player mp = null;
+        private static CultureInfo cultureInfo = new CultureInfo("en-US");                  // Set culture to US locale
 
         public static Grammar 
             MediaPlayerGrammar,
@@ -57,7 +58,7 @@ namespace ProjectNetra
             synth = new SpeechSynthesizer();
             synth.SetOutputToDefaultAudioDevice();                               // Configure output to the speech synthesizer.
 
-            recog = new SpeechRecognitionEngine(new CultureInfo("en-US"));       // Create an in-process speech recognizer for the en-US locale.
+            recog = new SpeechRecognitionEngine(cultureInfo);                    // Create an in-process speech recognizer for the specified CultureInfo
             LoadAllGrammars();                                                   // Create and load a grammar.
             recog.SetInputToDefaultAudioDevice();                                // Configure input to the speech recognizer.
 

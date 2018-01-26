@@ -32,6 +32,9 @@ namespace ProjectNetra
             back[fmp] = null;
             next[fmp] = null;
             MainFrame.Navigate(fmp);
+            B.IsEnabled = false;
+            N.IsEnabled = false;
+            fmp.ReadOutListItems(false, false);
         }
 
         private void ButtonBack(object sender, RoutedEventArgs e)
@@ -62,6 +65,9 @@ namespace ProjectNetra
             {
                 fmp = back[fmp];
                 MainFrame.Navigate(fmp);
+                N.IsEnabled = true;
+                B.IsEnabled = (back[fmp] != null);
+                fmp.ReadOutListItems(B.IsEnabled, true);
             }
         }
 
@@ -76,11 +82,17 @@ namespace ProjectNetra
             {
                 fmp = next[fmp];
                 MainFrame.Navigate(fmp);
+                B.IsEnabled = true;
+                N.IsEnabled = (next[fmp] != null);
+                fmp.ReadOutListItems(true,N.IsEnabled);
             }
         }
         public void Repeat()
         {
             MainFrame.Navigate(fmp);
+            B.IsEnabled = (back[fmp] != null);
+            N.IsEnabled = (next[fmp] != null);
+            fmp.ReadOutListItems(B.IsEnabled,N.IsEnabled);
         }
         public void Open()
         {
@@ -101,12 +113,15 @@ namespace ProjectNetra
                     temp.Dispose();
                     temp = nxt;
                 }
-                /*******************  Memory Management Done  ****************/
+                /*******************  Memory Management Finish  ****************/
                 next[fmp] = new File_Manager_Page(fmp.GetSelectedItem());
                 back[next[fmp]] = fmp;
                 fmp = next[fmp];
                 next[fmp] = null;
                 MainFrame.Navigate(fmp);
+                B.IsEnabled = true;
+                N.IsEnabled = false;
+                fmp.ReadOutListItems(true, false);
             }
         }
     }

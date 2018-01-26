@@ -17,6 +17,8 @@ namespace ProjectNetra
         private static SpeechRecognitionEngine recog = null;
         private static bool completed;                                           // Indicate when an asynchronous operation is finished.
         private static Media_Player mp = null;
+        private static CultureInfo cultureInfo = new CultureInfo("en-US");                  // Set culture to US locale
+        private static PromptBuilder pb = null;
 
         public static Grammar
             MediaPlayerGrammar,
@@ -41,7 +43,7 @@ namespace ProjectNetra
             CreateGrammar(ref MediaPlayerGrammar, ProjectResource.MediaPlayerCommand, "MediaPlayerGrammar");
         }
 
-        private static void EnableGrammar(ref Grammar g, bool b)
+        public static void EnableGrammar(ref Grammar g, bool b)
         {
             g.Enabled = b;
             recog.RequestRecognizerUpdate();
@@ -57,7 +59,7 @@ namespace ProjectNetra
             synth = new SpeechSynthesizer();
             synth.SetOutputToDefaultAudioDevice();                               // Configure output to the speech synthesizer.
 
-            recog = new SpeechRecognitionEngine(new CultureInfo("en-US"));       // Create an in-process speech recognizer for the en-US locale.
+            recog = new SpeechRecognitionEngine(cultureInfo);                    // Create an in-process speech recognizer for the specified CultureInfo
             LoadAllGrammars();                                                   // Create and load a grammar.
             recog.SetInputToDefaultAudioDevice();                                // Configure input to the speech recognizer.
 
@@ -205,14 +207,34 @@ namespace ProjectNetra
             }*/
         }
 
-        
-
+       
         public static void Speak(string msg)                                      // Use for Voice Output
         {
             synth.Pause();
             synth.SpeakAsyncCancelAll();
             synth.Resume();
             synth.SpeakAsync(msg);
+        }
+        public static void SpeakUntilInterrupt(string msg)
+        {
+
+        }
+
+        public static void StartPromptBuilder()
+        {
+            pb = new PromptBuilder(cultureInfo);
+        }
+        public static void AddPrompt(string msg)
+        {
+            pb.AppendText(msg);
+            pb.AppendBreak();
+        }
+        public static void SpeakPrompt()
+        {
+            synth.Pause();
+            synth.SpeakAsyncCancelAll();
+            synth.Resume();
+            synth.SpeakAsync(pb);
         }
 
         public static void Close()                                               // Custom function with the aim to release all references before shutdown

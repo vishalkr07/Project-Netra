@@ -188,24 +188,27 @@ namespace ProjectNetra
         public void ReadOutListItems(bool isBack, bool isNext)
         {
             int i = 1;
-            Speak_Listen.Speak("Here is the List of Folders");
+            Speak_Listen.StartPromptBuilder();
+            if(dirs.Count!=0)
+                Speak_Listen.AddPrompt("Here is the List of Folders");
             foreach(string dir in dirs)
             {
-                Speak_Listen.Speak("Number " +i.ToString() +","+ dir);
+                Speak_Listen.AddPrompt("Number " +i.ToString() +","+ dir);
                 i++;
             }
-            Speak_Listen.Speak("Here is the List of Files");
+            if(fileList.Count!=0)
+                Speak_Listen.AddPrompt("Here is the List of Files");
             foreach (string f in fileList)
             {
-                Speak_Listen.Speak("Number " + i.ToString() + "," + f);
+                Speak_Listen.AddPrompt("Number " + i.ToString() + "," + f);
                 i++;
             }
-            // Wait for sometime
             if (isBack)
-                Speak_Listen.Speak("Say Back to go back");
+                Speak_Listen.AddPrompt("Say Back to go back");
             if (isNext)
-                Speak_Listen.Speak("Say Next to go forward");
-            Speak_Listen.Speak("Say Repeat to repeat the list");
+                Speak_Listen.AddPrompt("Say Next to go forward");
+            Speak_Listen.AddPrompt("Say Repeat to repeat the list");
+            Speak_Listen.SpeakPrompt();
         }
 
     }
