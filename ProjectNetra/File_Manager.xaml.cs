@@ -21,7 +21,7 @@ namespace ProjectNetra
     /// </summary>
     public partial class File_Manager : Window
     {
-        private File_Manager_Page fmp = null;
+        private File_Manager_Page fmp = null,temp = null,nxt = null;
         private Dictionary<File_Manager_Page,File_Manager_Page> next = new Dictionary<File_Manager_Page, File_Manager_Page>();
         private Dictionary<File_Manager_Page,File_Manager_Page> back = new Dictionary<File_Manager_Page, File_Manager_Page>();
 
@@ -91,6 +91,17 @@ namespace ProjectNetra
             }
             else
             {
+                /*******************  Memory Management Start  ***************/
+                temp = next[fmp];
+                while (temp != null)
+                {
+                    nxt = next[temp];
+                    back.Remove(temp);
+                    next.Remove(temp);
+                    temp.Dispose();
+                    temp = nxt;
+                }
+                /*******************  Memory Management Done  ****************/
                 next[fmp] = new File_Manager_Page(fmp.GetSelectedItem());
                 back[next[fmp]] = fmp;
                 fmp = next[fmp];

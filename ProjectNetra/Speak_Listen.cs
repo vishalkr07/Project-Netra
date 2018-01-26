@@ -205,7 +205,7 @@ namespace ProjectNetra
             }*/
         }
 
-
+        
 
         public static void Speak(string msg)                                      // Use for Voice Output
         {

@@ -24,7 +24,7 @@ namespace ProjectNetra
     /// <summary>
     /// Interaction logic for File_Manager_Page.xaml
     /// </summary>
-    public partial class File_Manager_Page : Page
+    public partial class File_Manager_Page : Page, IDisposable
     {
         private List<Folders> items = new List<Folders>();       // Used to display in list for GUI 
         private List<string> dirs = new List<string>();          // Used to dictate the list of directories to the users
@@ -85,6 +85,13 @@ namespace ProjectNetra
             LB.ItemsSource = items;
         }
 
+        public void Dispose()
+        {
+            items.Clear();
+            dirs.Clear();
+            dict.Clear();
+            fileList.Clear();
+        }
         private void RetrieveSubfolders(DirectoryInfo dir)
         {
             DirectoryInfo[] subDirs = null;
