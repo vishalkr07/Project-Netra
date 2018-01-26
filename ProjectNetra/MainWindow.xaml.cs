@@ -34,7 +34,7 @@ namespace ProjectNetra
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Test.Speak("Hi Jerwin Mistry, how are you!. I am bla bla bla bla bla abla ahbf uadhfu duuafnjnjd jnjfn");
+            Speak_Listen.Speak("Hi Jerwin Mistry, how are you!. I am bla bla bla bla bla abla ahbf uadhfu duuafnjnjd jnjfn");
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -73,7 +73,7 @@ namespace ProjectNetra
         {
             Media_Player mp = new Media_Player();
             mp.Show();
-            Test.MPInit(mp);
+            Speak_Listen.MPInit(mp);
         }
 
         private void Button_Click_6(object sender, RoutedEventArgs e)
