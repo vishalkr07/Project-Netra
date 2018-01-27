@@ -49,5 +49,15 @@ namespace ProjectNetra
             "Repeat Off",
             "Open List"
         };
+
+        public static string[] GetNoGrammer(int no)
+        {
+            string[] s = new string[no];
+            for (int i = 1; i <= no; i++)
+            {
+                s[i - 1] = i.ToString();
+            }
+            return s;
+        }
     }
 }

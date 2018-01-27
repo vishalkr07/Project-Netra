@@ -43,6 +43,20 @@ namespace ProjectNetra
             CreateGrammar(ref MediaPlayerGrammar, ProjectResource.MediaPlayerCommand, "MediaPlayerGrammar");
         }
 
+        public static Grammar LoadDynamicGrammer(int no)
+        {
+            GrammarBuilder builder = new GrammarBuilder();
+            builder.Append(new Choices(ProjectResource.GetNoGrammer(no)));
+            Grammar g = new Grammar(builder);
+            recog.LoadGrammar(g);
+            return g;
+        }
+
+        public static void UnoadDynamicGrammer(ref Grammar g)
+        {
+            recog.UnloadGrammar(g);
+        }
+
         public static void EnableGrammar(ref Grammar g, bool b)
         {
             g.Enabled = b;
