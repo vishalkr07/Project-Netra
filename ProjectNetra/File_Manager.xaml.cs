@@ -21,16 +21,16 @@ namespace ProjectNetra
     /// </summary>
     public partial class File_Manager : Window
     {
-        private File_Manager_Page fmp = null,temp = null,nxt = null;
-        private Dictionary<File_Manager_Page,File_Manager_Page> next = new Dictionary<File_Manager_Page, File_Manager_Page>();
-        private Dictionary<File_Manager_Page,File_Manager_Page> back = new Dictionary<File_Manager_Page, File_Manager_Page>();
+        private File_Manager_Page fmp = null; 
+        private LinkedList<File_Manager_Page> ll = new LinkedList<File_Manager_Page>();
+        private LinkedListNode<File_Manager_Page> llnode = null,temp = null, nxt = null;
 
         public File_Manager()
         {
             InitializeComponent();
             fmp = new File_Manager_Page();
-            back[fmp] = null;
-            next[fmp] = null;
+            ll.AddFirst(fmp);
+            llnode = ll.First;
             MainFrame.Navigate(fmp);
             B.IsEnabled = false;
             N.IsEnabled = false;
@@ -56,26 +56,28 @@ namespace ProjectNetra
 
         public void Back()
         {
-            fmp = back[fmp];
+            llnode = llnode.Previous;
+            fmp = llnode.Value;
             MainFrame.Navigate(fmp);
             N.IsEnabled = true;
-            B.IsEnabled = (back[fmp] != null);
+            B.IsEnabled = (llnode.Previous != null);
             fmp.ReadOutListItems(B.IsEnabled, true);
         }
 
         public void Next()
         {
-            fmp = next[fmp];
+            llnode = llnode.Next;
+            fmp = llnode.Value;
             MainFrame.Navigate(fmp);
             B.IsEnabled = true;
-            N.IsEnabled = (next[fmp] != null);
+            N.IsEnabled = (llnode.Next != null);
             fmp.ReadOutListItems(true,N.IsEnabled);
         }
         public void Repeat()
         {
             MainFrame.Navigate(fmp);
-            B.IsEnabled = (back[fmp] != null);
-            N.IsEnabled = (next[fmp] != null);
+            B.IsEnabled = (llnode.Previous != null);
+            N.IsEnabled = (llnode.Next != null);
             fmp.ReadOutListItems(B.IsEnabled,N.IsEnabled);
         }
         public void Open()
@@ -112,25 +114,32 @@ namespace ProjectNetra
             else
             {
                 /*******************  Memory Management Start  ***************/
-                temp = next[fmp];
+
+                temp = llnode.Next;
+
                 while (temp != null)
                 {
-                    nxt = next[temp];
-                    back.Remove(temp);
-                    next.Remove(temp);
-                    temp.Dispose();
+                    nxt = temp.Next;
+                    temp.Value.Dispose();
+                    ll.Remove(temp);
                     temp = nxt;
                 }
                 /*******************  Memory Management Finish  ****************/
-                next[fmp] = new File_Manager_Page(di);
-                back[next[fmp]] = fmp;
-                fmp = next[fmp];
-                next[fmp] = null;
+
+                ll.AddAfter(llnode, new File_Manager_Page(di));
+                llnode = llnode.Next;
+                fmp = llnode.Value;
+
                 MainFrame.Navigate(fmp);
                 B.IsEnabled = true;
                 N.IsEnabled = false;
                 fmp.ReadOutListItems(true, false);
             }
+        }
+
+        public void TakeCommands(string cmd)
+        {
+            
         }
     }
 
