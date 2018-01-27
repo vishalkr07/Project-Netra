@@ -29,7 +29,9 @@ namespace ProjectNetra
         private List<Folders> items = new List<Folders>();       // Used to display in list for GUI 
         private List<string> dirs = new List<string>();          // Used to dictate the list of directories to the users
         private List<string> fileList = new List<string>();         // Used to dictate the list of files to the users
-        private Dictionary<string, DirectoryInfo> dict = new Dictionary<string, DirectoryInfo>();  // Used to reference to the directory that the user selects 
+        private Dictionary<string, DirectoryInfo> dictFolder = new Dictionary<string, DirectoryInfo>();  // Used to reference to the directory that the user selects 
+        private Dictionary<string, FileInfo> dictFiles = new Dictionary<string, FileInfo>(); // Used to reference to the files that the user selects 
+        private int foldersCount = 0;
 
         public File_Manager_Page()                                      // To be invoked only for getting the Drives and Special Folders
         {
@@ -48,16 +50,16 @@ namespace ProjectNetra
                 }
                 DirectoryInfo rootDir = di.RootDirectory;
                                 
-                items.Add(new Folders() { Folder = dr });
+                items.Add(new Folders() { Folder = dr, IconPath = "local_disk.ico" });
                 dirs.Add(dr);
-                dict[dr] = rootDir;
+                dictFolder[dr] = rootDir;
             }
             
-            items.Add(new Folders() { Folder = "Documents" });
-            items.Add(new Folders() { Folder = "Desktop" });
-            items.Add(new Folders() { Folder = "Downloads" });
-            items.Add(new Folders() { Folder = "Music" });
-            items.Add(new Folders() { Folder = "Videos" });
+            items.Add(new Folders() { Folder = "Documents", IconPath = "folder_icon.png"});
+            items.Add(new Folders() { Folder = "Desktop", IconPath = "folder_icon.png" });
+            items.Add(new Folders() { Folder = "Downloads", IconPath = "folder_icon.png" });
+            items.Add(new Folders() { Folder = "Music", IconPath = "folder_icon.png" });
+            items.Add(new Folders() { Folder = "Videos", IconPath = "folder_icon.png" });
 
             dirs.Add("Documents");
             dirs.Add("Desktop");
@@ -65,11 +67,11 @@ namespace ProjectNetra
             dirs.Add("Music");
             dirs.Add("Videos");
 
-            dict["Documents"] = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
-            dict["Desktop"] = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
-            dict["Downloads"] = new DirectoryInfo(Path.Combine(Environment.GetEnvironmentVariable("USERPROFILE"), "Downloads"));
-            dict["Music"] = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.MyMusic));
-            dict["Videos"] = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.MyVideos));
+            dictFolder["Documents"] = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+            dictFolder["Desktop"] = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
+            dictFolder["Downloads"] = new DirectoryInfo(Path.Combine(Environment.GetEnvironmentVariable("USERPROFILE"), "Downloads"));
+            dictFolder["Music"] = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.MyMusic));
+            dictFolder["Videos"] = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.MyVideos));
 
             LB.ItemsSource = items;
 
@@ -85,12 +87,13 @@ namespace ProjectNetra
             LB.ItemsSource = items;
         }
 
-        public void Dispose()
+        public void Dispose()                                    // For memory management
         {
             items.Clear();
             dirs.Clear();
-            dict.Clear();
+            dictFolder.Clear();
             fileList.Clear();
+            dictFiles.Clear();
         }
         private void RetrieveSubfolders(DirectoryInfo dir)
         {
@@ -113,9 +116,9 @@ namespace ProjectNetra
                     try
                     {
                         DirectoryInfo[] subSubDirs = subDir.GetDirectories();
-                        items.Add(new Folders() { Folder = subDirName });
+                        items.Add(new Folders() { Folder = subDirName, IconPath = "folder_icon.png" });
                         dirs.Add(subDirName);
-                        dict[subDirName] = subDir;
+                        dictFolder[subDirName] = subDir;
                     }
                     catch (Exception e)                         // "subDir" having no access permission is ignored in the list
                     {
@@ -150,9 +153,10 @@ namespace ProjectNetra
                         string fileName = file.Name;
                         if (fileName == "desktop.ini")        // Ignore all "desktop.ini" files
                             continue;
-                        items.Add(new Folders() { Folder = fileName });
+                        items.Add(new Folders() { Folder = fileName, IconPath = "file_icon.png" });
                         fileList.Add(fileName);
-                        dict[fileName] = null;
+                        dictFolder[fileName] = null;
+                        dictFiles[fileName] = file;
                     }
                     catch (FileNotFoundException e)             // If file was deleted by a separate application or thread till we reach here.
                     {
@@ -177,14 +181,20 @@ namespace ProjectNetra
         }
 
 
-        public DirectoryInfo GetSelectedItem()                      // Gives information about the selected item in the current page.
+        public DirectoryInfo GetSelectedFolder()                // Gives information about the selected folder in the current page.
+        {
+            if (LB.SelectedItem == null || LB.SelectedIndex >= foldersCount)
+                return null;
+            return dictFolder[(LB.SelectedItem as Folders).Folder];
+        }
+        public FileInfo GetSelectedFile()                      // Gives information about the selected file in the current page.
         {
             if (LB.SelectedItem == null)
                 return null;
-            return dict[(LB.SelectedItem as Folders).Folder];
+            return dictFiles[(LB.SelectedItem as Folders).Folder];
         }
 
-        
+
         public void ReadOutListItems(bool isBack, bool isNext)
         {
             int i = 1;
@@ -196,6 +206,7 @@ namespace ProjectNetra
                 Speak_Listen.AddPrompt("Number " +i.ToString() +","+ dir);
                 i++;
             }
+            foldersCount = i;
             if(fileList.Count!=0)
                 Speak_Listen.AddPrompt("Here is the List of Files");
             foreach (string f in fileList)
@@ -203,6 +214,8 @@ namespace ProjectNetra
                 Speak_Listen.AddPrompt("Number " + i.ToString() + "," + f);
                 i++;
             }
+            if (dirs.Count == 0 && fileList.Count == 0)
+                Speak_Listen.AddPrompt("Sorry, this folder is empty");
             if (isBack)
                 Speak_Listen.AddPrompt("Say Back to go back");
             if (isNext)
@@ -210,10 +223,13 @@ namespace ProjectNetra
             Speak_Listen.AddPrompt("Say Repeat to repeat the list");
             Speak_Listen.SpeakPrompt();
         }
-
+        
     }
+
+
     public class Folders
     {
         public string Folder { get; set; }
+        public string IconPath { get; set; }
     }
 }

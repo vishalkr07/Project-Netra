@@ -56,36 +56,20 @@ namespace ProjectNetra
 
         public void Back()
         {
-            if (back[fmp] == null)
-            {
-                // Acknowledge
-                Debug.WriteLine("You cannot go back.");
-            }
-            else
-            {
-                fmp = back[fmp];
-                MainFrame.Navigate(fmp);
-                N.IsEnabled = true;
-                B.IsEnabled = (back[fmp] != null);
-                fmp.ReadOutListItems(B.IsEnabled, true);
-            }
+            fmp = back[fmp];
+            MainFrame.Navigate(fmp);
+            N.IsEnabled = true;
+            B.IsEnabled = (back[fmp] != null);
+            fmp.ReadOutListItems(B.IsEnabled, true);
         }
 
         public void Next()
         {
-            if (next[fmp] == null)
-            {
-                // Acknowledge
-                Debug.WriteLine("You cannot go further.");
-            }
-            else
-            {
-                fmp = next[fmp];
-                MainFrame.Navigate(fmp);
-                B.IsEnabled = true;
-                N.IsEnabled = (next[fmp] != null);
-                fmp.ReadOutListItems(true,N.IsEnabled);
-            }
+            fmp = next[fmp];
+            MainFrame.Navigate(fmp);
+            B.IsEnabled = true;
+            N.IsEnabled = (next[fmp] != null);
+            fmp.ReadOutListItems(true,N.IsEnabled);
         }
         public void Repeat()
         {
@@ -96,10 +80,34 @@ namespace ProjectNetra
         }
         public void Open()
         {
-            if (fmp.GetSelectedItem() == null)
+            DirectoryInfo di = fmp.GetSelectedFolder();
+            if (di == null)
             {
-                // Acknowledge
-                Debug.WriteLine("You have not selected any item.");
+                FileInfo fi = fmp.GetSelectedFile();
+                if(fi == null)
+                {
+                    Speak_Listen.Speak("You have not selected any item.");
+                }
+                else
+                {
+                    Debug.WriteLine("QQQQQQQQQQQQQ    " + fi.Name);
+                    if (fi.Name == "firefox.exe" || fi.Name == "chrome.exe" || fi.Name == "iexplore")
+                    {
+                        // TODO 1: Call the Web Browser Controller
+                    }
+                    else if (fi.Extension == ".pdf" || fi.Extension == ".txt" || fi.Extension == ".docx")
+                    {
+                        // TODO 1: Call the Document Controller
+                    }
+                    else if (fi.Extension == ".mp3" || fi.Extension == ".mp4" || fi.Extension == ".wav" || fi.Extension == ".mpeg" || fi.Extension == ".wmv" || fi.Extension == ".avi")
+                    { 
+                        // TODO 1: Call the Media Player
+                    }
+                    else
+                    {
+                        Speak_Listen.Speak("Sorry, the file format is not supported.");
+                    }
+                }
             }
             else
             {
@@ -114,7 +122,7 @@ namespace ProjectNetra
                     temp = nxt;
                 }
                 /*******************  Memory Management Finish  ****************/
-                next[fmp] = new File_Manager_Page(fmp.GetSelectedItem());
+                next[fmp] = new File_Manager_Page(di);
                 back[next[fmp]] = fmp;
                 fmp = next[fmp];
                 next[fmp] = null;
