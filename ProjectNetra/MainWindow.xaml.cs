@@ -81,6 +81,12 @@ namespace ProjectNetra
             File_Manager fm = new File_Manager();
             fm.Show();
         }
+
+        private void Button_Click_7(object sender, RoutedEventArgs e)
+        {
+            Calculator cal = new Calculator();
+            cal.Show();
+        }
     }
 
         

@@ -88,6 +88,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Calculator.xaml.cs">
+      <DependentUpon>Calculator.xaml</DependentUpon>
+    </Compile>
     <Compile Include="File_Manager.xaml.cs">
       <DependentUpon>File_Manager.xaml</DependentUpon>
     </Compile>
@@ -105,6 +108,10 @@
     <Compile Include="Speak_Listen_Emulated.cs" />
     <Compile Include="Test.cs" />
     <Compile Include="Volume_Control.cs" />
+    <Page Include="Calculator.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="File_Manager.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
