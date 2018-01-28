@@ -50,6 +50,40 @@ namespace ProjectNetra
             "Open List"
         };
 
+        public static string[] CalculatorCommand =
+        {
+            "point",
+            "zero",
+            "one",
+            "two",
+            "three",
+            "four",
+            "five",
+            "six",
+            "seven",
+            "eight",
+            "nine",
+            "plus",
+            "minus",
+            "divide",
+            "product",
+            "equal",
+            "delete",
+            "clear",
+            "sine",
+            "cos",
+            "tan",
+            "expo",
+            "square",
+            "power",
+            "mod",
+            "log",
+            "root",
+            "store",
+            "MemC",
+            "load"
+        };
+
         public static string[] GetNoGrammer(int no)
         {
             string[] s = new string[no];

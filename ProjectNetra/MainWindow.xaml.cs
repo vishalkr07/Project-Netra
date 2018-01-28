@@ -50,8 +50,8 @@ namespace ProjectNetra
         }
 
         private void OnContentLoaded(object sender,EventArgs e) {
-            //Test.Speak("Hi I am your blind assistant!");
-            //Test.Listen();
+            Speak_Listen.Speak("Hi I am your blind assistant!");
+            Speak_Listen.Listen();
         }
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
@@ -86,6 +86,7 @@ namespace ProjectNetra
         {
             Calculator cal = new Calculator();
             cal.Show();
+            Speak_Listen.CalcInit(cal);
         }
     }
 

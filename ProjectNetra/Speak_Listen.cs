@@ -17,11 +17,13 @@ namespace ProjectNetra
         private static SpeechRecognitionEngine recog = null;
         private static bool completed;                                           // Indicate when an asynchronous operation is finished.
         private static Media_Player mp = null;
+        private static Calculator calc = null;
         private static CultureInfo cultureInfo = new CultureInfo("en-US");                  // Set culture to US locale
         private static PromptBuilder pb = null;
 
         public static Grammar
             MediaPlayerGrammar,
+            CalculatorGrammar,
             AssistantGrammar;
 
         private static void CreateGrammar(ref Grammar g, string[] ar, string name, bool Enable = false)         // Build Grammars for speech recognition
@@ -41,6 +43,7 @@ namespace ProjectNetra
         {
             CreateGrammar(ref AssistantGrammar, ProjectResource.AssistantCommandList, "AssistantGrammar", true);
             CreateGrammar(ref MediaPlayerGrammar, ProjectResource.MediaPlayerCommand, "MediaPlayerGrammar");
+            CreateGrammar(ref CalculatorGrammar, ProjectResource.CalculatorCommand, "CalculatorGrammar");
         }
 
         public static Grammar LoadDynamicGrammer(int no)
@@ -68,6 +71,13 @@ namespace ProjectNetra
             EnableGrammar(ref MediaPlayerGrammar, true);
             mp = obj;
         }
+
+        public static void CalcInit(Calculator obj)
+        {
+            EnableGrammar(ref CalculatorGrammar, true);
+            calc = obj;
+        }
+
         public static void Initialize()                                          // Initialize components
         {
             synth = new SpeechSynthesizer();
@@ -132,6 +142,10 @@ namespace ProjectNetra
                     break;
                 default:
                     break;
+            }
+
+            if (calc != null && calc.IsActive) {
+                calc.instruct(resultText);
             }
 
             /**************************************************************/
