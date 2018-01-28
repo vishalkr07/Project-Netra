@@ -5,8 +5,54 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProjectNetra"
         mc:Ignorable="d"
-        Title="Calculator" Height="300" Width="300">
-    <Grid>
-        
+        Title="Calculator" Height="350" Width="330"
+        ContentRendered="OnLoad">
+    <Grid Margin="36,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="96*"/>
+            <RowDefinition Height="223*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="60*" />
+            <ColumnDefinition Width="47*" />
+            <ColumnDefinition Width="136*"/>
+            <ColumnDefinition Width="7*"/>
+        </Grid.ColumnDefinitions>
+
+
+        <TextBox Margin="12,12,12,44" Name="textBox1" Background="{x:Null}" AutoWordSelection="True" TextWrapping="Wrap" IsHitTestVisible="False"  Grid.ColumnSpan="2" Visibility="Collapsed" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="21,45,0,0" Name="txtShow" VerticalAlignment="Top" Width="212" TextAlignment="Right" Grid.ColumnSpan="3" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="21,10,0,0" Name="textbox" VerticalAlignment="Top" Width="212" TextAlignment="Right" Grid.ColumnSpan="3" />
+        <Button Content="1" Height="23" HorizontalAlignment="Left" Margin="14,86,0,0" Name="btnOne" VerticalAlignment="Top" Width="35" Grid.RowSpan="2" />
+        <Button Content="3" Height="23" HorizontalAlignment="Left" Margin="2,0,0,202" Name="btnThree" VerticalAlignment="Bottom" Width="35" Grid.Column="2" Grid.RowSpan="2"  />
+        <Button Content="+" Height="23" HorizontalAlignment="Right" Margin="0,48,49,0" Name="btnPlus" VerticalAlignment="Top" Width="35" Grid.Column="2" Grid.Row="1" />
+        <Button Content="=" Height="23" HorizontalAlignment="Left" Margin="2,77,0,0" Name="btnEqual" VerticalAlignment="Top" Width="35"  Grid.Column="2" Grid.Row="1" />
+        <Button Content="2" Height="23" HorizontalAlignment="Left" Margin="3,86,0,0" Name="btnTwo" VerticalAlignment="Top" Width="35"  Grid.Column="1" Grid.RowSpan="2" />
+        <Button Content="4" Height="23" HorizontalAlignment="Left" Margin="14,19,0,0" Name="btnFour" VerticalAlignment="Top" Width="35" Grid.Row="1" />
+        <Button Content="5" Height="23" HorizontalAlignment="Left" Margin="3,19,0,0" Name="btnfive" VerticalAlignment="Top" Width="35"  Grid.Column="1" Grid.Row="1" />
+        <Button Content="6" Height="23" HorizontalAlignment="Left" Margin="2,19,0,0" Name="btnSix" VerticalAlignment="Top" Width="35" Grid.Column="2" Grid.Row="1" />
+        <Button Content="7" Height="23" HorizontalAlignment="Left" Margin="14,49,0,0" Name="btnSeven" VerticalAlignment="Top" Width="35" Grid.Row="1"  />
+        <Button Content="8" Height="23" HorizontalAlignment="Left" Margin="3,49,0,0" Name="btnEight" VerticalAlignment="Top" Width="35" Grid.Column="1" Grid.Row="1" />
+        <Button Content="9" Height="23" HorizontalAlignment="Left" Margin="2,48,0,0" Name="btnNine" VerticalAlignment="Top" Width="35" Grid.Column="2" Grid.Row="1" />
+        <Button Content="0" Height="23" HorizontalAlignment="Left" Margin="3,75,0,0" Name="btnZero" VerticalAlignment="Top" Width="35"  Grid.Column="1" Grid.Row="1" />
+        <Button Content="-" Height="23" HorizontalAlignment="Right" Margin="0,19,49,0" Name="btnMinus" VerticalAlignment="Top" Width="35"  Grid.Column="2" Grid.Row="1" />
+        <Button Content="*" Height="23" HorizontalAlignment="Right" Margin="0,86,49,0" Name="btnMul" VerticalAlignment="Top" Width="35"  Grid.Column="2" Grid.RowSpan="2" />
+        <Button Content="/" Height="23" HorizontalAlignment="Right" Margin="0,78,49,0" Name="btnDiv" VerticalAlignment="Top" Width="35"  Grid.Column="2" Grid.Row="1" />
+        <Button Content="." Height="23" HorizontalAlignment="Left" Margin="14,77,0,0" Name="btnDot" VerticalAlignment="Top" Width="35" Grid.Row="1" />
+
+        <Button Content="x^.5" Height="23" HorizontalAlignment="Right" Margin="0,86,1,0" Name="btnroot" VerticalAlignment="Top" Width="35"  Grid.Column="2" Grid.RowSpan="2" />
+        <Button Content="log" Height="23" HorizontalAlignment="Right" Margin="0,19,1,0" Name="btnlog" VerticalAlignment="Top" Width="35"  Grid.Column="2" Grid.Row="1" />
+        <Button Content="%" Height="23" HorizontalAlignment="Right" Margin="0,48,1,0" Name="btnmod" VerticalAlignment="Top" Width="35"  Grid.Column="2" Grid.Row="1" />
+        <Button Content="x^y" Height="23" HorizontalAlignment="Right" Margin="0,78,1,0" Name="btnpow" VerticalAlignment="Top" Width="35"  Grid.Column="2" Grid.Row="1" />
+        <Button Content="sin" Height="23" HorizontalAlignment="Left" Margin="14,107,0,0" Name="btnsin" VerticalAlignment="Top" Width="35"  Grid.Row="1" />
+        <Button Content="cos" Height="23" HorizontalAlignment="Left" Margin="3,0,0,87" Name="btncos" VerticalAlignment="Bottom" Width="35"  Grid.Column="1" Grid.Row="1" />
+        <Button Content="tan" Height="23" HorizontalAlignment="Left" Margin="2,107,0,0" Name="btntan" VerticalAlignment="Top" Width="35"  Grid.Column="2" Grid.Row="1" />
+        <Button Content="x^2" Height="23" HorizontalAlignment="Right" Margin="0,108,49,0" Name="btnsq" VerticalAlignment="Top" Width="35"  Grid.Column="2" Grid.Row="1" />
+        <Button Content="e^x" Height="23" HorizontalAlignment="Right" Margin="0,108,1,0" Name="btnexp" VerticalAlignment="Top" Width="35"  Grid.Column="2" Grid.Row="1" />
+        <Button Content="MS" Height="23" HorizontalAlignment="Left" Margin="14,140,0,0" Name="btnstore" VerticalAlignment="Top" Width="35"  Grid.Row="1" />
+        <Button Content="MR" Height="23" HorizontalAlignment="Left" Margin="3,0,0,54" Name="btnread" VerticalAlignment="Bottom" Width="35" Grid.Column="1" Grid.Row="1" />
+        <Button Content="MC" Height="23" HorizontalAlignment="Left" Margin="2,140,0,0" Name="btnmemclear" VerticalAlignment="Top" Width="35"  Grid.Column="2" Grid.Row="1" />
+        <Button Content="clear" Height="23" HorizontalAlignment="Right" Margin="0,140,49,0" Name="btnclear" VerticalAlignment="Top" Width="35"  Grid.Column="2" Grid.Row="1" />
+        <Button Content="delete" Height="23" HorizontalAlignment="Right" Margin="0,140,1,0" Name="btndelete" VerticalAlignment="Top" Width="35"  Grid.Column="2" Grid.Row="1" />
     </Grid>
 </Window>
