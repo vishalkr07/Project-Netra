@@ -24,17 +24,32 @@ namespace ProjectNetra
         private File_Manager_Page fmp = null; 
         private LinkedList<File_Manager_Page> ll = new LinkedList<File_Manager_Page>();
         private LinkedListNode<File_Manager_Page> llnode = null,temp = null, nxt = null;
+        private short isFolder = 0;                                                         // Will have 3 values: 0 -> none, 1->folder, 2->file
+        private int firstItemNo = 1;                                                        // Tracks the first item no. of the set of items currently being displayed in GUI 
+        private int noOfFiles = 0, noOfFolders = 0;                                         // Tracks the no. of files/folders in the current directory 
 
         public File_Manager()
         {
             InitializeComponent();
             fmp = new File_Manager_Page();
+            B.IsEnabled = N.IsEnabled = false;
+            UpdateMembers();
             ll.AddFirst(fmp);
             llnode = ll.First;
             MainFrame.Navigate(fmp);
-            B.IsEnabled = false;
-            N.IsEnabled = false;
-            fmp.ReadOutListItems(false, false);
+        }
+        private void UpdateMembers()
+        {
+            isFolder = fmp.GetFolderStatus();
+            firstItemNo = fmp.GetFirstItemNo();
+            noOfFiles = fmp.GetNoOfFiles();
+            noOfFolders = fmp.GetNoOfFolders();
+            F.Content = (isFolder == 2 ? "Folders" : "Files");
+            F.IsEnabled = (noOfFolders != 0) && (noOfFiles != 0);
+            U.IsEnabled = (firstItemNo != 1) || ((isFolder==2) && (firstItemNo == 1) && (noOfFolders != 0));
+            D.IsEnabled = ((isFolder == 1) && ((firstItemNo+10<noOfFolders) || (noOfFiles != 0))) || ((isFolder == 2 )&& (firstItemNo + 10 < noOfFiles));
+            O.IsEnabled = (isFolder != 0);
+            fmp.ReadOutListItems(B.IsEnabled, N.IsEnabled, U.IsEnabled, D.IsEnabled, F.IsEnabled, F.Content.ToString());
         }
 
         private void ButtonBack(object sender, RoutedEventArgs e)
@@ -53,32 +68,44 @@ namespace ProjectNetra
         {
             Open();            
         }
+        private void ButtonUp(object sender, RoutedEventArgs e)
+        {
+            Up();
+        }
+        private void ButtonDown(object sender, RoutedEventArgs e)
+        {
+            Down();
+        }
+        private void ButtonFileFolder(object sender, RoutedEventArgs e)
+        {
+            FileOrFolder();
+        }
 
         public void Back()
         {
             llnode = llnode.Previous;
             fmp = llnode.Value;
-            MainFrame.Navigate(fmp);
             N.IsEnabled = true;
             B.IsEnabled = (llnode.Previous != null);
-            fmp.ReadOutListItems(B.IsEnabled, true);
+            UpdateMembers();
+            MainFrame.Navigate(fmp);
         }
 
         public void Next()
         {
             llnode = llnode.Next;
             fmp = llnode.Value;
-            MainFrame.Navigate(fmp);
             B.IsEnabled = true;
             N.IsEnabled = (llnode.Next != null);
-            fmp.ReadOutListItems(true,N.IsEnabled);
+            UpdateMembers();
+            MainFrame.Navigate(fmp);
         }
         public void Repeat()
         {
-            MainFrame.Navigate(fmp);
             B.IsEnabled = (llnode.Previous != null);
             N.IsEnabled = (llnode.Next != null);
-            fmp.ReadOutListItems(B.IsEnabled,N.IsEnabled);
+            UpdateMembers();
+            MainFrame.Navigate(fmp);
         }
         public void Open()
         {
@@ -129,14 +156,27 @@ namespace ProjectNetra
                 ll.AddAfter(llnode, new File_Manager_Page(di));
                 llnode = llnode.Next;
                 fmp = llnode.Value;
-
-                MainFrame.Navigate(fmp);
                 B.IsEnabled = true;
                 N.IsEnabled = false;
-                fmp.ReadOutListItems(true, false);
+                UpdateMembers();
+                MainFrame.Navigate(fmp);
             }
         }
-
+        public void Up()
+        {
+            fmp.MoveWithinList(true);
+            UpdateMembers();
+        }
+        public void Down()
+        {
+            fmp.MoveWithinList(false);
+            UpdateMembers();
+        }
+        public void FileOrFolder()
+        {
+            fmp.SetFolderStatus(F.Content.ToString()=="Folders");
+            UpdateMembers();
+        }
         public void TakeCommands(string cmd)
         {
             

@@ -13,6 +13,9 @@
         <Button x:Name="N"  Content="Next" HorizontalAlignment="Left" Height="36" Margin="62,519,0,-56" VerticalAlignment="Top" Width="52" Background="#FF0086FF" Click="ButtonNext"/>
         <Button x:Name="R" Content="Refresh" HorizontalAlignment="Left" Height="36" Margin="119,519,0,-56" VerticalAlignment="Top" Width="61" Background="#FFFFB300" Click="ButtonRefresh"/>
         <Button x:Name="O" Content="Open" HorizontalAlignment="Left" Height="36" Margin="643,519,0,-49" VerticalAlignment="Top" Width="85" Background="#FF2ECF1A" Click="ButtonOpen"/>
+        <Button x:Name="U" Content="Up" HorizontalAlignment="Left" Height="36" Margin="266,519,0,-49" VerticalAlignment="Top" Width="51" Click="ButtonUp"/>
+        <Button x:Name="D" Content="Down" HorizontalAlignment="Left" Height="36" Margin="322,519,0,-49" VerticalAlignment="Top" Width="52" Click="ButtonDown"/>
+        <Button x:Name="F" HorizontalAlignment="Left" Height="36" Margin="379,519,0,-49" VerticalAlignment="Top" Width="62" Click="ButtonFileFolder"/>
 
     </Grid>
 </Window>
