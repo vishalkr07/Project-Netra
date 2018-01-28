@@ -4,27 +4,41 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ProjectNetra"
-      mc:Ignorable="d" 
-      d:DesignHeight="403.944" d:DesignWidth="467.53"
-      Title="File_Manager_Page">
+      mc:Ignorable="d" d:DesignWidth="729.971"
+      Title="File_Manager_Page" Height="506" Width="728">
 
     <Grid Margin="10">
-        <ListBox Name="LB" HorizontalContentAlignment="Stretch">
+        
+        <ListBox Name="LB" HorizontalContentAlignment="Stretch" Margin="0,76,0,0">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="0,2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        
+
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{Binding IconPath}" Margin="0,0,5,0" Width="30" Height="30" />
                             <TextBlock Text="{Binding Folder}" />
                         </StackPanel>
-                        
+
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+        <Grid HorizontalAlignment="Left" Height="70" VerticalAlignment="Top" Width="708">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <StackPanel x:Name="SP1" Orientation="Horizontal">
+                <Image Source="{Binding IconPath}" Margin="0,0,5,0" Width="30" Height="30" />
+                <TextBlock Text="{Binding FFNo}" VerticalAlignment="Center" />
+            </StackPanel>
+            <StackPanel x:Name="SP2" Orientation="Horizontal" Grid.Column="1">
+                <Image Source="{Binding IconPath}" Margin="0,0,5,0" Width="30" Height="30" />
+                <TextBlock Text="{Binding FFNo}" VerticalAlignment="Center" />
+            </StackPanel>
+        </Grid>
     </Grid>
 </Page>

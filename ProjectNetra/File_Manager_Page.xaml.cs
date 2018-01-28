@@ -26,7 +26,9 @@ namespace ProjectNetra
     /// </summary>
     public partial class File_Manager_Page : Page, IDisposable
     {
-        private List<Folders> items = new List<Folders>();       // Used to display in list for GUI 
+        private List<Folders> items = new List<Folders>();       // Used to display Files/Folders in list for GUI 
+        private List<FoderDetails> details1 = new List<FoderDetails>(); // Used to display details in the GUI StackPanel1
+        private List<FoderDetails> details2 = new List<FoderDetails>(); // Used to display details in the GUI StackPanel2
         private List<string> dirs = new List<string>();          // Used to dictate the list of directories to the users
         private List<string> fileList = new List<string>();         // Used to dictate the list of files to the users
         private Dictionary<string, DirectoryInfo> dictFolder = new Dictionary<string, DirectoryInfo>();  // Used to reference to the directory that the user selects 
@@ -54,7 +56,7 @@ namespace ProjectNetra
                 dirs.Add(dr);
                 dictFolder[dr] = rootDir;
             }
-            
+
             items.Add(new Folders() { Folder = "Documents", IconPath = "folder_icon.png"});
             items.Add(new Folders() { Folder = "Desktop", IconPath = "folder_icon.png" });
             items.Add(new Folders() { Folder = "Downloads", IconPath = "folder_icon.png" });
@@ -73,8 +75,12 @@ namespace ProjectNetra
             dictFolder["Music"] = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.MyMusic));
             dictFolder["Videos"] = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.MyVideos));
 
-            LB.ItemsSource = items;
+            details1.Add(new FoderDetails() { FFNo = "Disks : " + (items.Count - 5).ToString(), IconPath = "local_disk.ico" });
+            details2.Add(new FoderDetails() { FFNo = "Folders : 5", IconPath = "folder_icon.png" });
 
+            LB.ItemsSource = items;
+            SP1.DataContext = details1;
+            SP2.DataContext = details2;
         }
 
         public File_Manager_Page(DirectoryInfo dir)                        // To be invoked for getting the contents within a Folder/Drive
@@ -84,7 +90,12 @@ namespace ProjectNetra
             RetrieveSubfolders(dir);
             RetrieveFiles(dir);
 
+            details1.Add(new FoderDetails() { FFNo = "Folders : " + dirs.Count.ToString(), IconPath = "folder_icon.png" });
+            details2.Add(new FoderDetails() { FFNo = "Files : " + fileList.Count.ToString(), IconPath = "file_icon.png" });
+
             LB.ItemsSource = items;
+            SP1.DataContext = details1;
+            SP2.DataContext = details2;
         }
 
         public void Dispose()                                    // For memory management
@@ -125,6 +136,7 @@ namespace ProjectNetra
                         Debug.WriteLine(e.Message);
                     }
                 }
+
             }
             catch (UnauthorizedAccessException e)          // Exception thrown if we do not have discovery permission on a folder or file.
             {
@@ -230,6 +242,12 @@ namespace ProjectNetra
     public class Folders
     {
         public string Folder { get; set; }
+        public string IconPath { get; set; }
+    }
+
+    public class FoderDetails
+    {
+        public string FFNo { get; set; }
         public string IconPath { get; set; }
     }
 }
