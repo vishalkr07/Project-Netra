@@ -84,7 +84,7 @@ namespace ProjectNetra
             }
             return value;
         }
-        public void instruct(string str)
+        public void Instruct(string str)
         {
             Debug.WriteLine("hello");
             if (str == "one")
