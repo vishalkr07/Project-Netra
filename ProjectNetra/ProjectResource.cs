@@ -84,6 +84,11 @@ namespace ProjectNetra
             "load"
         };
 
+        public static string[] FileManagerGrammar =
+        {
+            "Open"
+        };
+
         public static string[] GetNoGrammer(int no)
         {
             string[] s = new string[no];
