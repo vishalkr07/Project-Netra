@@ -86,10 +86,23 @@ namespace ProjectNetra
 
         public static string[] FileManagerCommand =
         {
-            "Open",
+            "Back",
+            "Next",
             "Up",
             "Down",
-            "Repeat"
+            "Files",
+            "Folders",
+            "Repeat",
+            "one",
+            "two",
+            "three",
+            "four",
+            "five",
+            "six",
+            "seven",
+            "eight",
+            "nine",
+            "ten"
         };
 
         public static string[] GetNoGrammer(int no)
