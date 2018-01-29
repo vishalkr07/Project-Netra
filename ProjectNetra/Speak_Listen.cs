@@ -46,7 +46,7 @@ namespace ProjectNetra
             CreateGrammar(ref AssistantGrammar, ProjectResource.AssistantCommandList, "AssistantGrammar", true);
             CreateGrammar(ref MediaPlayerGrammar, ProjectResource.MediaPlayerCommand, "MediaPlayerGrammar");
             CreateGrammar(ref CalculatorGrammar, ProjectResource.CalculatorCommand, "CalculatorGrammar");
-            CreateGrammar(ref FileManagerGrammar, ProjectResource.FileManagerGrammar, "FileManagerGrammar");
+            CreateGrammar(ref FileManagerGrammar, ProjectResource.FileManagerCommand, "FileManagerGrammar");
         }
 
         public static Grammar LoadDynamicGrammer(int no)
@@ -83,7 +83,7 @@ namespace ProjectNetra
 
         public static void FMInit(File_Manager obj)
         {
-            EnableGrammar(ref CalculatorGrammar, true);
+            EnableGrammar(ref FileManagerGrammar, true);
             fm = obj;
         }
 

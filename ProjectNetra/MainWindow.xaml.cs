@@ -80,6 +80,7 @@ namespace ProjectNetra
         {
             File_Manager fm = new File_Manager();
             fm.Show();
+            Speak_Listen.FMInit(fm);
         }
 
         private void Button_Click_7(object sender, RoutedEventArgs e)
