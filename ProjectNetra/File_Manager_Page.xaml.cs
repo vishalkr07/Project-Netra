@@ -137,6 +137,14 @@ namespace ProjectNetra
         {
             return firstItemNo;
         }
+        public int GetLastItemNo()
+        {
+            return lastItemNo;
+        }
+        public int GetSelectedItemNo()
+        {
+            return (LB.SelectedIndex + 1);
+        }
         public void GetInitialItems()                               // Gets the first set of items in the folder
         {
             if (dirs.Count != 0)
@@ -160,6 +168,8 @@ namespace ProjectNetra
             else
             {
                 isFolder = 0;
+                firstItemNo = 0;
+                lastItemNo = 0;
             }
         }
 
@@ -291,40 +301,36 @@ namespace ProjectNetra
             }
 
         }
-
-        // GetSelectedFolder() gives information about the selected folder in the current page or returns null if the selected item is not a folder
-        public DirectoryInfo GetSelectedFolder()                
+        
+        public DirectoryInfo GetSelectedFolder(int selectedItemNo)          // Gets information about the selected folder
         {
-            if (LB.SelectedItem == null || isFolder==2)
-                return null;
-            return dictFolder[(LB.SelectedItem as Folders).Folder];
-        }
-
-        // GetSelectedFile() gives information about the selected file in the current page or returns null if the selected item is not a file
-        public FileInfo GetSelectedFile()                      
-        {
-            if (LB.SelectedItem == null)
-                return null;
-            return dictFiles[(LB.SelectedItem as Folders).Folder];
+            return dictFolder[items[selectedItemNo - 1].Folder];
         }
         
-        public void ReadOutListItems(bool isBack, bool isNext, bool isUp, bool isDown, bool isFF , string ff)
+        public FileInfo GetSelectedFile(int selectedItemNo)                 // Gets information about the selected file
+        {
+            return dictFiles[items[selectedItemNo - 1].Folder];
+        }
+        public void ReadOutListItems(string parentDir,bool isBack, bool isNext, bool isUp, bool isDown, bool isFF , string ff)
         {
             Speak_Listen.StartPromptBuilder();
+            if (parentDir != "")
+                Speak_Listen.AddPrompt(parentDir + " is Opened");
             if (isFolder==0)
                 Speak_Listen.AddPrompt("Sorry, this folder is empty");
             else
             {
-                if(firstItemNo == 1)
-                {
-                    if(isBack)                             
-                        Speak_Listen.AddPrompt("There is a total of " + dirs.Count.ToString() + " folders and " + fileList.Count.ToString() + " files in this directory.");
-                    else      // Indicates "This PC" part
-                        Speak_Listen.AddPrompt("There is a total of " + (dirs.Count - 5).ToString() + " drives and 5 special folders in your Computer.");
-                }
+                                
                 if (isFolder == 1)
                 {
-                    if(isBack)      
+                    if (firstItemNo == 1)
+                    {
+                        if (isBack)
+                            Speak_Listen.AddPrompt("There is a total of " + dirs.Count.ToString() + " folders and " + fileList.Count.ToString() + " files in this directory.");
+                        else      // Indicates "This PC" part
+                            Speak_Listen.AddPrompt("There is a total of " + (dirs.Count - 5).ToString() + " drives and 5 special folders in your Computer.");
+                    }
+                    if (isBack)      
                         Speak_Listen.AddPrompt("Here is the list of folders from " + firstItemNo.ToString() + " to " + lastItemNo.ToString());
                 }
                 else

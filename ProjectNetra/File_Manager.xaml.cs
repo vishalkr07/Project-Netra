@@ -21,35 +21,51 @@ namespace ProjectNetra
     /// </summary>
     public partial class File_Manager : Window
     {
+        private Dictionary<string, int> number = new Dictionary<string, int>();
         private File_Manager_Page fmp = null; 
         private LinkedList<File_Manager_Page> ll = new LinkedList<File_Manager_Page>();
         private LinkedListNode<File_Manager_Page> llnode = null,temp = null, nxt = null;
         private short isFolder = 0;                                                         // Will have 3 values: 0 -> none, 1->folder, 2->file
-        private int firstItemNo = 1;                                                        // Tracks the first item no. of the set of items currently being displayed in GUI 
+        private int firstItemNo = 1,lastItemNo = 0;                                         // Tracks the first and last item no. of the set of items currently being displayed in GUI 
         private int noOfFiles = 0, noOfFolders = 0;                                         // Tracks the no. of files/folders in the current directory 
+        private int noOfItems = 0;                                                          // Tracks no. of items displayed in the GUI
 
         public File_Manager()
         {
             InitializeComponent();
+
+            number["one"] = 1;
+            number["two"] = 2;
+            number["three"] = 3;
+            number["four"] = 4;
+            number["five"] = 5;
+            number["six"] = 6;
+            number["seven"] = 7;
+            number["eight"] = 8;
+            number["nine"] = 9;
+            number["ten"] = 10;
+
             fmp = new File_Manager_Page();
             B.IsEnabled = N.IsEnabled = false;
-            UpdateMembers();
+            UpdateMembers("");
             ll.AddFirst(fmp);
             llnode = ll.First;
             MainFrame.Navigate(fmp);
         }
-        private void UpdateMembers()
+        private void UpdateMembers(string parentDir)                      // parentDir != "", if Open() is called; parentDir indicates Parent Directory name
         {
             isFolder = fmp.GetFolderStatus();
             firstItemNo = fmp.GetFirstItemNo();
+            lastItemNo = fmp.GetLastItemNo();
+            noOfItems = (lastItemNo - firstItemNo + 1);
             noOfFiles = fmp.GetNoOfFiles();
             noOfFolders = fmp.GetNoOfFolders();
             F.Content = (isFolder == 2 ? "Folders" : "Files");
             F.IsEnabled = (noOfFolders != 0) && (noOfFiles != 0);
             U.IsEnabled = (firstItemNo != 1) || ((isFolder==2) && (firstItemNo == 1) && (noOfFolders != 0));
-            D.IsEnabled = ((isFolder == 1) && ((firstItemNo+10<noOfFolders) || (noOfFiles != 0))) || ((isFolder == 2 )&& (firstItemNo + 10 < noOfFiles));
+            D.IsEnabled = ((isFolder == 1) && ((lastItemNo < noOfFolders) || (noOfFiles != 0))) || ((isFolder == 2) && (lastItemNo < noOfFiles));
             O.IsEnabled = (isFolder != 0);
-            fmp.ReadOutListItems(B.IsEnabled, N.IsEnabled, U.IsEnabled, D.IsEnabled, F.IsEnabled, F.Content.ToString());
+            fmp.ReadOutListItems(parentDir,B.IsEnabled, N.IsEnabled, U.IsEnabled, D.IsEnabled, F.IsEnabled, F.Content.ToString());
         }
 
         private void ButtonBack(object sender, RoutedEventArgs e)
@@ -66,7 +82,7 @@ namespace ProjectNetra
         }
         private void ButtonOpen(object sender, RoutedEventArgs e)
         {
-            Open();            
+            Open(fmp.GetSelectedItemNo());            
         }
         private void ButtonUp(object sender, RoutedEventArgs e)
         {
@@ -80,14 +96,14 @@ namespace ProjectNetra
         {
             FileOrFolder();
         }
-
+       
         public void Back()
         {
             llnode = llnode.Previous;
             fmp = llnode.Value;
             N.IsEnabled = true;
             B.IsEnabled = (llnode.Previous != null);
-            UpdateMembers();
+            UpdateMembers("");
             MainFrame.Navigate(fmp);
         }
 
@@ -97,49 +113,25 @@ namespace ProjectNetra
             fmp = llnode.Value;
             B.IsEnabled = true;
             N.IsEnabled = (llnode.Next != null);
-            UpdateMembers();
+            UpdateMembers("");
             MainFrame.Navigate(fmp);
         }
         public void Repeat()
         {
             B.IsEnabled = (llnode.Previous != null);
             N.IsEnabled = (llnode.Next != null);
-            UpdateMembers();
+            UpdateMembers("");
             MainFrame.Navigate(fmp);
         }
-        public void Open()
+        public void Open(int selectedItemNo)
         {
-            DirectoryInfo di = fmp.GetSelectedFolder();
-            if (di == null)
+            if(selectedItemNo == -1)
             {
-                FileInfo fi = fmp.GetSelectedFile();
-                if(fi == null)
-                {
-                    Speak_Listen.Speak("You have not selected any item.");
-                }
-                else
-                {
-                    Debug.WriteLine("QQQQQQQQQQQQQ    " + fi.Name);
-                    if (fi.Name == "firefox.exe" || fi.Name == "chrome.exe" || fi.Name == "iexplore")
-                    {
-                        // TODO 1: Call the Web Browser Controller
-                    }
-                    else if (fi.Extension == ".pdf" || fi.Extension == ".txt" || fi.Extension == ".docx")
-                    {
-                        // TODO 1: Call the Document Controller
-                    }
-                    else if (fi.Extension == ".mp3" || fi.Extension == ".mp4" || fi.Extension == ".wav" || fi.Extension == ".mpeg" || fi.Extension == ".wmv" || fi.Extension == ".avi")
-                    { 
-                        // TODO 1: Call the Media Player
-                    }
-                    else
-                    {
-                        Speak_Listen.Speak("Sorry, the file format is not supported.");
-                    }
-                }
+                Speak_Listen.Speak("You haven't selected any item.");
             }
-            else
+            if(isFolder == 1)
             {
+                DirectoryInfo dI = fmp.GetSelectedFolder(selectedItemNo);
                 /*******************  Memory Management Start  ***************/
 
                 temp = llnode.Next;
@@ -153,33 +145,95 @@ namespace ProjectNetra
                 }
                 /*******************  Memory Management Finish  ****************/
 
-                ll.AddAfter(llnode, new File_Manager_Page(di));
+                ll.AddAfter(llnode, new File_Manager_Page(dI));
                 llnode = llnode.Next;
                 fmp = llnode.Value;
                 B.IsEnabled = true;
                 N.IsEnabled = false;
-                UpdateMembers();
+                UpdateMembers(dI.Name);
                 MainFrame.Navigate(fmp);
             }
+            else
+            {
+                FileInfo fI = fmp.GetSelectedFile(selectedItemNo);
+                Debug.WriteLine("QQQQQQQQQQQQQ    " + fI.Name);
+                if (fI.Name == "firefox.exe" || fI.Name == "chrome.exe" || fI.Name == "iexplore")
+                {
+                    // TODO 1: Call the Web Browser Controller
+                }
+                else if (fI.Extension == ".pdf" || fI.Extension == ".txt" || fI.Extension == ".docx")
+                {
+                    // TODO 1: Call the Document Controller
+                }
+                else if (fI.Extension == ".mp3" || fI.Extension == ".mp4" || fI.Extension == ".wav" || fI.Extension == ".mpeg" || fI.Extension == ".wmv" || fI.Extension == ".avi")
+                {
+                    // TODO 1: Call the Media Player
+                }
+                else
+                {
+                    Speak_Listen.Speak("Sorry, the file format is not supported.");
+                }
+
+            }
+                        
         }
         public void Up()
         {
             fmp.MoveWithinList(true);
-            UpdateMembers();
+            UpdateMembers("");
         }
         public void Down()
         {
             fmp.MoveWithinList(false);
-            UpdateMembers();
+            UpdateMembers("");
         }
         public void FileOrFolder()
         {
             fmp.SetFolderStatus(F.Content.ToString()=="Folders");
-            UpdateMembers();
+            UpdateMembers("");
         }
         public void Instruct(string cmd)
         {
             Debug.WriteLine("File Manager Input:  " + cmd);
+            switch (cmd)
+            {
+                case "Back":
+                    Back();
+                    break;
+                case "Next":
+                    Next();
+                    break;
+                case "Repeat":
+                    Repeat();
+                    break;
+                case "Up":
+                    Up();
+                    break;
+                case "Down":
+                    Down();
+                    break;
+                case "Files":                    
+                case "Folders":
+                    FileOrFolder();
+                    break;
+                default:
+                    if (isFolder == 0)
+                    {
+                        Speak_Listen.Speak("Sorry, this folder is empty");
+                    }
+                    else
+                    {
+                        if(number[cmd] > noOfItems)    // Item no. selected is not actually present in the list
+                        {
+                            Speak_Listen.Speak("Sorry, wrong choice. Say a number from 1 to " + noOfItems.ToString());
+                        }
+                        else
+                        {
+                            Open(number[cmd]);
+                        }
+                    }
+                    break;
+            }
         }
     }
 
