@@ -89,6 +89,12 @@ namespace ProjectNetra
             cal.Show();
             Speak_Listen.CalcInit(cal);
         }
+
+        private void Button_Click_8(object sender, RoutedEventArgs e)
+        {
+            Mail.Email email = new Mail.Email();
+            email.Show();
+        }
     }
 
         
