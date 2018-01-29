@@ -177,9 +177,9 @@ namespace ProjectNetra
             fmp.SetFolderStatus(F.Content.ToString()=="Folders");
             UpdateMembers();
         }
-        public void TakeCommands(string cmd)
+        public void Instruct(string cmd)
         {
-            
+            Debug.WriteLine("File Manager Input:  " + cmd);
         }
     }
 

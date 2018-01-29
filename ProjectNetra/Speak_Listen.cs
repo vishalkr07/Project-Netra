@@ -145,7 +145,7 @@ namespace ProjectNetra
             }
 
             if (calc != null && calc.IsActive) {
-                calc.instruct(resultText);
+                calc.Instruct(resultText);
             }
 
             /**************************************************************/
