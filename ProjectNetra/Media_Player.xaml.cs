@@ -408,5 +408,38 @@ namespace ProjectNetra
         {
             mediaElement.Volume = volumeSlider.Value;
         }
+
+        public void Instruct(string str)
+        {
+            switch (str)
+            {
+                case "Pause":
+                    PauseSong();
+                    break;
+                case "Play":
+                    playsong();
+                    break;
+                case "Stop":
+                    StopSong();
+                    break;
+                case "Next":
+                    Next();
+                    break;
+                case "Previous":
+                    Previous();
+                    break;
+                case "Reapeat On":
+                    RepeatOn();
+                    break;
+                case "Reapeat Off":
+                    RepeatOff();
+                    break;
+                case "open list":
+                    OpenList();
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }

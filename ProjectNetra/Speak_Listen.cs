@@ -123,37 +123,13 @@ namespace ProjectNetra
 
             /**************************************************************/
 
-            switch (resultText)
+            if (mp != null && mp.IsActive)
             {
-                case "Pause":
-                    mp.PauseSong();
-                    break;
-                case "Play":
-                    mp.playsong();
-                    break;
-                case "Stop":
-                    mp.StopSong();
-                    break;
-                case "Next":
-                    mp.Next();
-                    break;
-                case "Previous":
-                    mp.Previous();
-                    break;
-                case "Reapeat On":
-                    mp.RepeatOn();
-                    break;
-                case "Reapeat Off":
-                    mp.RepeatOff();
-                    break;
-                case "open list":
-                    mp.OpenList();
-                    break;
-                default:
-                    break;
+                mp.Instruct(resultText);
             }
 
-            if (calc != null && calc.IsActive) {
+            if (calc != null && calc.IsActive)
+            {
                 calc.Instruct(resultText);
             }
 
