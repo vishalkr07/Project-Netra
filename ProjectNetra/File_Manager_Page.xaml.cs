@@ -86,7 +86,6 @@ namespace ProjectNetra
             SP2.DataContext = details2;
 
             lastItemNo = dirs.Count();
-            firstItemNo = Math.Min(firstItemNo,lastItemNo);
         }
 
         public File_Manager_Page(DirectoryInfo dir)                        // To be invoked for getting the contents within a Folder/Drive
@@ -168,8 +167,6 @@ namespace ProjectNetra
             else
             {
                 isFolder = 0;
-                firstItemNo = 0;
-                lastItemNo = 0;
             }
         }
 

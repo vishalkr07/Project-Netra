@@ -125,7 +125,7 @@ namespace ProjectNetra
         }
         public void Open(int selectedItemNo)
         {
-            if(selectedItemNo == -1)
+            if(selectedItemNo == 0)
             {
                 Speak_Listen.Speak("You haven't selected any item.");
             }
