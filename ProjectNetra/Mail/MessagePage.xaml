@@ -6,10 +6,10 @@
       xmlns:local="clr-namespace:ProjectNetra.Mail"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
-      Title="MessagePage">
+      Title="MessagePage" Width="642" Height="396">
 
     <Grid>
-        <StackPanel Name="messageStack" Background="White" Margin="-242,0,0,-99">
+        <StackPanel Name="messageStack" Background="White">
             
             <TextBlock Name="subject" FontSize="15" Margin="0, 5" />
             

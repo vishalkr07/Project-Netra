@@ -6,27 +6,27 @@
       xmlns:local="clr-namespace:ProjectNetra.Mail"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
-      Title="LoginPage">
+      Title="LoginPage" Width="871" Height="411">
 
-    <Grid Margin="0,0,-300,0" Background="White">
-        <StackPanel Width="500" Height="300">
-            <TextBlock Text="Login to continue" FontSize="25" />
-            <TextBlock Text="We support Google Mail at the moment, only." />
-            <Grid Height="150" Margin="0, 30, 0, 0">
+    <Grid Background="White">
+        <StackPanel>
+            <TextBlock Text="Login to continue" FontSize="25" Margin="308,0,10,0" Height="37" />
+            <TextBlock Text="We support Google Mail at the moment, only." Margin="283,0,10,0" Height="21" />
+            <Grid Height="103" Margin="93,30,294,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition Width="3*" />
                 </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0">
+                <StackPanel Grid.Column="0" Margin="10,0,0,0">
                     <TextBlock Text="Username" Margin="0, 5, 0, 15" />
                     <TextBlock Text="Password" />
                 </StackPanel>
                 <StackPanel Grid.Column="1">
-                    <TextBox Name="username" Margin="0, 0, 0, 5" Padding="4" />
-                    <PasswordBox Name="password" Padding="4" />
+                    <TextBox Name="username" Margin="0,0,10,5" Padding="4" />
+                    <PasswordBox Name="password" Padding="4" Margin="0,0,10,0" />
                 </StackPanel>
             </Grid>
-            <Button Width="150" Name="loginBtn" Click="loginBtn_Click">Login</Button>
+            <Button Name="loginBtn" Click="loginBtn_Click" Height="36" Margin="319,0,412,0">Login</Button>
             <TextBlock Name="error" Margin="10" Foreground="Red" />
         </StackPanel>
     </Grid>

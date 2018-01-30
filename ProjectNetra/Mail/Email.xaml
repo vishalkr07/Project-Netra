@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProjectNetra.Mail"
         mc:Ignorable="d"
-        Title="Email" Height="300" Width="300">
+        Title="Email" Height="462" Width="899">
     <Grid>
-        <Frame Name="mainFrame" NavigationUIVisibility="Hidden" Navigated="mainFrame_Navigated" />
+        <Frame Name="mainFrame" NavigationUIVisibility="Hidden" Navigated="mainFrame_Navigated" Margin="10" />
     </Grid>
 </Window>

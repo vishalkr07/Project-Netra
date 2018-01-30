@@ -5,26 +5,33 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ProjectNetra.Mail"
       mc:Ignorable="d" 
-      d:DesignHeight="300" d:DesignWidth="300"
-      Title="FolderMessagePage">
+      d:DesignHeight="300"
+      Title="FolderMessagePage" Width="642" Height="396">
 
     <Grid>
-        <ListView Name="messagesList" SelectionChanged="messagesList_SelectionChanged" Margin="-252,0,0,-95">
-            
+        <ListView Name="messagesList" SelectionChanged="messagesList_SelectionChanged" Height="396" VerticalAlignment="Top" Margin="0">
+
             <ListView.ItemTemplate>
-                
+
                 <DataTemplate>
-                    
-                    <StackPanel Margin="5, 0, 5, 5">
-                        
-                        <TextBlock FontSize="20" Text="{Binding Subject}" Cursor="Hand" />
-                        
-                    </StackPanel>
-                    
+                    <Border BorderThickness="0,0,0,1" BorderBrush="Gray">
+                        <Grid Margin="0,2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="145" />
+                                <ColumnDefinition Width="340" />
+                                <ColumnDefinition Width="141" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock FontSize="14" Text="{Binding From}" Cursor="Hand"  TextWrapping="NoWrap" Margin="3,0"/>
+                            <TextBlock Grid.Column="1" FontSize="14" Text="{Binding Subject}" Cursor="Hand"  TextWrapping="NoWrap" Margin="3,0"/>
+                            <TextBlock Grid.Column="2" FontSize="14" Text="{Binding Time}" Cursor="Hand"  TextWrapping="NoWrap" Margin="3,0,0,0"/>
+
+                        </Grid>
+                    </Border>
+
                 </DataTemplate>
-                
+
             </ListView.ItemTemplate>
-            
+
         </ListView>
     </Grid>
 </Page>
