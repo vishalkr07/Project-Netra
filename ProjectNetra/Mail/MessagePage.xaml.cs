@@ -31,6 +31,7 @@ namespace ProjectNetra.Mail
             InitializeComponent();
 
             // Fill the page
+            from.Text = message.From.DisplayName + " <"+message.From.Address+"> ";
             subject.Text = message.Subject;
             body.Text = message.Body.Text;
             time.Text = message.Date.Value.ToString();

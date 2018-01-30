@@ -6,10 +6,10 @@
       xmlns:local="clr-namespace:ProjectNetra.Mail"
       mc:Ignorable="d" 
       d:DesignHeight="300"
-      Title="FolderMessagePage" Width="642" Height="396">
+      Title="FolderMessagePage" Width="642" Height="423">
 
     <Grid>
-        <ListView Name="messagesList" SelectionChanged="messagesList_SelectionChanged" Height="396" VerticalAlignment="Top" Margin="0">
+        <ListView Name="messagesList" SelectionChanged="messagesList_SelectionChanged" Height="423" VerticalAlignment="Top" Margin="0">
 
             <ListView.ItemTemplate>
 

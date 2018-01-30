@@ -24,6 +24,10 @@ namespace ProjectNetra.Mail
     public partial class HomePage : Page
     {
         public static Frame ContentFrame { get; set; }
+
+        private Dictionary<string,FolderMessagePage> dictFolders= new Dictionary<string,FolderMessagePage>();  // Map folder name into its corresponding object in FolderMessagePage class
+        private string curFolder = "";              // Tracks the current folder in mail
+
         public HomePage()
         {
           
@@ -60,14 +64,26 @@ namespace ProjectNetra.Mail
 
             if (item != null)
             {
-                // Load the folder for its messages.
-                loadFolder(item.Title);
+                loadFolder(item.Title);                                 // Load the folder for its messages.
             }
         }
 
         private void loadFolder(string name)
         {
-            ContentFrame.Content = new FolderMessagePage(name);
+            curFolder = name;
+            if(dictFolders.ContainsKey(name))
+                ContentFrame.Content = dictFolders[name];
+            else
+            {
+                dictFolders[name] = new FolderMessagePage(name);
+                ContentFrame.Content = dictFolders[name];
+            }
+            
+        }
+
+        private void ButtonBack(object sender, RoutedEventArgs e)
+        {
+            ContentFrame.Content = dictFolders[curFolder];
         }
     }
 

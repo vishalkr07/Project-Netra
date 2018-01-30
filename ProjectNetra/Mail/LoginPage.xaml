@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:ProjectNetra.Mail"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
-      Title="LoginPage" Width="871" Height="411">
+      Title="LoginPage" Width="871" Height="520">
 
     <Grid Background="White">
         <StackPanel>
