@@ -224,7 +224,6 @@ namespace ProjectNetra
                 Thread.Sleep(333);                                               
             }*/
         }
-
        
         public static void Speak(string msg)                                      // Use for Voice Output
         {

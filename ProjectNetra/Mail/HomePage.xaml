@@ -16,6 +16,7 @@
             </ListView.ItemTemplate>
         </ListView>
         <Frame Name="contentFrame" NavigationUIVisibility="Hidden" Navigated="contentFrame_Navigated" Margin="215,5,5,10" Height="423" />
-        <Button Content="Back" HorizontalAlignment="Left" Margin="5,473,0,0" VerticalAlignment="Top" Width="75" Height="35" Click="ButtonBack"/>
+        <Button Content="Back" HorizontalAlignment="Left" Margin="5,5,0,0" VerticalAlignment="Top" Width="75" Height="35" Click="ButtonBack"/>
+        <Button Content="Logout" HorizontalAlignment="Left" Margin="781,5,0,0" VerticalAlignment="Top" Width="80" Height="35" Click="ButtonLogOut"/>
     </Grid>
 </Page>

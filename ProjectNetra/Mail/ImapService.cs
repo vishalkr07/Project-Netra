@@ -23,6 +23,12 @@ namespace ProjectNetra.Mail
             }
         }
 
+        // Closing connections
+        private static void CloseConnection()
+        {
+            client.Disconnect();
+        }
+
         // Login function
         public static bool Login(string user, string passwd)
         {
@@ -35,6 +41,7 @@ namespace ProjectNetra.Mail
         {
             if (client.IsAuthenticated) { client.Logout(); }
             Email.LoggedIn = false;
+            CloseConnection();
         }
 
         public static List<EmailFolder> GetFolders()
@@ -44,7 +51,14 @@ namespace ProjectNetra.Mail
             {
                 folders.Add(new EmailFolder { Title = folder.Name });
             }
-
+            
+            folders.Add(new EmailFolder { Title = client.Folders.Important.Name });
+            folders.Add(new EmailFolder { Title = client.Folders.Sent.Name });
+            folders.Add(new EmailFolder { Title = client.Folders.All.Name });
+            folders.Add(new EmailFolder { Title = client.Folders.Drafts.Name });
+            folders.Add(new EmailFolder { Title = client.Folders.Flagged.Name });                       // Starred
+            folders.Add(new EmailFolder { Title = client.Folders.Junk.Name });                          // Spam 
+            folders.Add(new EmailFolder { Title = client.Folders.Trash.Name });
             // Before returning start the idling
             client.Folders.Inbox.StartIdling(); // And continue to listen for more.
 
@@ -60,8 +74,34 @@ namespace ProjectNetra.Mail
 
         public static MessageCollection GetMessagesForFolder(string name)
         {
-            client.Folders[name].Messages.Download(); // Start the download process;
-            return client.Folders[name].Messages;
+            switch (name)
+            {
+                case "Important" :
+                    client.Folders.Important.Messages.Download();
+                    return client.Folders.Important.Messages;
+                case "Sent Mail":
+                    client.Folders.Sent.Messages.Download();
+                    return client.Folders.Sent.Messages;
+                case "All Mail":
+                    client.Folders.All.Messages.Download();
+                    return client.Folders.All.Messages;
+                case "Drafts":
+                    client.Folders.Drafts.Messages.Download();
+                    return client.Folders.Drafts.Messages;
+                case "Starred":
+                    client.Folders.Flagged.Messages.Download();
+                    return client.Folders.Flagged.Messages;
+                case "Spam":
+                    client.Folders.Junk.Messages.Download();
+                    return client.Folders.Junk.Messages;
+                case "Trash":
+                    client.Folders.Trash.Messages.Download();
+                    return client.Folders.Trash.Messages;
+                default:
+                    client.Folders[name].Messages.Download();                    // Start the download process;
+                    return client.Folders[name].Messages;
+            }
+            
         }
     }
 }

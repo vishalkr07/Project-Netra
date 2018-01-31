@@ -85,6 +85,12 @@ namespace ProjectNetra.Mail
         {
             ContentFrame.Content = dictFolders[curFolder];
         }
+
+        private void ButtonLogOut(object sender, RoutedEventArgs e)
+        {
+            ImapService.Logout();
+            Email.LoadLoginPage(ref Email.loginpage);
+        }
     }
 
     class EmailFolder

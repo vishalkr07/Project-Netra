@@ -21,16 +21,19 @@ namespace ProjectNetra.Mail
     {
         public static Frame MainFrame { get; set; }
         public static bool LoggedIn { get; set; }
+        public static LoginPage loginpage = new LoginPage();
         public Email()
         {
             InitializeComponent();
             MainFrame = mainFrame;
 
-            MainFrame.Content = new LoginPage();
-
+            LoadLoginPage(ref loginpage);
+        }
+        public static void LoadLoginPage(ref LoginPage lp)
+        {
+            MainFrame.Content = lp;
             ImapService.Initialize();
         }
-
         private void mainFrame_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
         {
 
