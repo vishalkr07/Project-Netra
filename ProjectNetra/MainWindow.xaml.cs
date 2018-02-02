@@ -95,6 +95,11 @@ namespace ProjectNetra
             Mail.Email email = new Mail.Email();
             email.Show();
         }
+
+        private void Button_Click_9(object sender, RoutedEventArgs e)
+        {
+            Document.MSWord_Controller mswControl = new Document.MSWord_Controller();
+        }
     }
 
         

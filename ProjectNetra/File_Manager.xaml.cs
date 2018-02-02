@@ -129,7 +129,7 @@ namespace ProjectNetra
             {
                 Speak_Listen.Speak("You haven't selected any item.");
             }
-            if(isFolder == 1)
+            else if(isFolder == 1)
             {
                 DirectoryInfo dI = fmp.GetSelectedFolder(selectedItemNo);
                 /*******************  Memory Management Start  ***************/
@@ -161,19 +161,34 @@ namespace ProjectNetra
                 {
                     // TODO 1: Call the Web Browser Controller
                 }
-                else if (fI.Extension == ".pdf" || fI.Extension == ".txt" || fI.Extension == ".docx")
-                {
-                    // TODO 1: Call the Document Controller
-                }
-                else if (fI.Extension == ".mp3" || fI.Extension == ".mp4" || fI.Extension == ".wav" || fI.Extension == ".mpeg" || fI.Extension == ".wmv" || fI.Extension == ".avi")
-                {
-                    // TODO 1: Call the Media Player
-                }
                 else
                 {
-                    Speak_Listen.Speak("Sorry, the file format is not supported.");
+                    switch (fI.Extension)
+                    {
+                        case ".pdf":
+                            // TODO 1: Call the PDF Reader
+                            break;
+                        case ".txt":
+                            // TODO 1: Call the Respective Document Controller
+                            break;
+                        case ".doc":
+                        case ".docx":
+                            Document.MSWord_Controller mSWord = new Document.MSWord_Controller();
+                            mSWord.Open(fI.FullName);
+                            break;
+                        case ".mp3":
+                        case ".mp4":
+                        case ".wav":
+                        case ".mpeg":
+                        case ".wmv":
+                        case ".avi":
+                            // TODO 1: Call the Media Player
+                            break;
+                        default:
+                            Speak_Listen.Speak("Sorry, the file format is not supported.");
+                            break;
+                    }
                 }
-
             }
                         
         }
@@ -198,23 +213,38 @@ namespace ProjectNetra
             switch (cmd)
             {
                 case "Back":
-                    Back();
+                    if (B.IsEnabled)
+                        Back();
+                    else
+                        Speak_Listen.Speak("Sorry, No such control is present");
                     break;
                 case "Next":
-                    Next();
+                    if(N.IsEnabled)
+                        Next();
+                    else
+                        Speak_Listen.Speak("Sorry, No such control is present");
                     break;
                 case "Repeat":
                     Repeat();
                     break;
                 case "Up":
-                    Up();
+                    if(U.IsEnabled)
+                        Up();
+                    else
+                        Speak_Listen.Speak("Sorry, No such control is present");
                     break;
                 case "Down":
-                    Down();
+                    if(D.IsEnabled)
+                        Down();
+                    else
+                        Speak_Listen.Speak("Sorry, No such control is present");
                     break;
                 case "Files":                    
                 case "Folders":
-                    FileOrFolder();
+                    if(F.IsEnabled)
+                        FileOrFolder();
+                    else
+                        Speak_Listen.Speak("Sorry, No such control is present");
                     break;
                 default:
                     if (isFolder == 0)
