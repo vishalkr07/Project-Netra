@@ -52,6 +52,12 @@ namespace ProjectNetra
             llnode = ll.First;
             MainFrame.Navigate(fmp);
         }
+
+        public Tuple<int,int> GetItemRange()
+        {
+            return new Tuple<int, int>(firstItemNo,lastItemNo);
+        }
+
         private void UpdateMembers(string parentDir)                      // parentDir != "", if Open() is called; parentDir indicates Parent Directory name
         {
             isFolder = fmp.GetFolderStatus();

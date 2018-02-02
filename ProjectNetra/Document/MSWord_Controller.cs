@@ -40,14 +40,19 @@ namespace ProjectNetra.Document
         public void Close()
         {
         }
-
-        public void Save()
+        /*
+         *  Handles Save/Save As
+         *  saveAs :
+         *          true --> SaveAs to be applied
+         *          false --> Normal Save to be applied
+         */
+        public void Save(bool saveAs)
+        {
+            wordApp.ActiveDocument.Save();
+        }              
+        public void Instruct(string cmd)
         {
 
         }
-        public void SaveAs()
-        {
-        }
-
     }
 }
