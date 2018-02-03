@@ -29,14 +29,15 @@ namespace ProjectNetra
     {
         /* Constraint:  |items| <=10 ; We split the list of folders/files within a directory into set of maximum 10 elements  */
         private ObservableCollection<Folders> items = new ObservableCollection<Folders>();                  // Used to display Files/Folders in list for GUI 
-        private List<FoderDetails> details1 = new List<FoderDetails>();                                     // Used to display details in the GUI StackPanel1
-        private List<FoderDetails> details2 = new List<FoderDetails>();                                     // Used to display details in the GUI StackPanel2
+        private ObservableCollection<FoderDetails> details1 = new ObservableCollection<FoderDetails>();                                     // Used to display details in the GUI StackPanel1
+        private ObservableCollection<FoderDetails> details2 = new ObservableCollection<FoderDetails>();                                     // Used to display details in the GUI StackPanel2
         private List<string> dirs = new List<string>();                                                     // Used to dictate the list of directories to the users
         private List<string> fileList = new List<string>();                                                 // Used to dictate the list of files to the users
         private Dictionary<string, DirectoryInfo> dictFolder = new Dictionary<string, DirectoryInfo>();     // Used to reference to the directory that the user selects 
         private Dictionary<string, FileInfo> dictFiles = new Dictionary<string, FileInfo>();                // Used to reference to the files that the user selects 
         private short isFolder = 1;                                                                         // Will have 3 values: 0 -> none, 1->folder, 2->file
         private int firstItemNo = 1,lastItemNo = 0;                                                         // Tracks the first and last item no. of the set of items currently being displayed in GUI 
+        private string filter = "";
 
         public File_Manager_Page()                                      // To be invoked only for getting the Drives and Special Folders
         {
@@ -92,16 +93,7 @@ namespace ProjectNetra
         {
             InitializeComponent();
 
-            RetrieveSubfolders(dir);
-            RetrieveFiles(dir);
-
-            details1.Add(new FoderDetails() { FFNo = "Folders : " + dirs.Count.ToString(), IconPath = "folder_icon.png" });
-            details2.Add(new FoderDetails() { FFNo = "Files : " + fileList.Count.ToString(), IconPath = "file_icon.png" });
-            GetInitialItems();
-       
-            LB.ItemsSource = items;
-            SP1.DataContext = details1;
-            SP2.DataContext = details2;
+            Filter(dir,"None");
         }
 
         public void Dispose()                                    // For memory management
@@ -144,8 +136,18 @@ namespace ProjectNetra
         {
             return (LB.SelectedIndex + 1);
         }
+        public DirectoryInfo GetSelectedFolder(int selectedItemNo)          // Gets information about the selected folder
+        {
+            return dictFolder[items[selectedItemNo - 1].Folder];
+        }
+
+        public FileInfo GetSelectedFile(int selectedItemNo)                 // Gets information about the selected file
+        {
+            return dictFiles[items[selectedItemNo - 1].Folder];
+        }
         public void GetInitialItems()                               // Gets the first set of items in the folder
         {
+            items.Clear();
             if (dirs.Count != 0)
             {
                 lastItemNo = Math.Min(firstItemNo + 9, dirs.Count);
@@ -170,6 +172,29 @@ namespace ProjectNetra
             }
         }
 
+        public void Filter(DirectoryInfo dir,string pat)
+        {
+            Debug.WriteLine("Testing Filter1:    "+pat);
+            if (pat == filter)
+                return;
+            if (pat == "None")
+                pat = "";
+            pat = "*" + pat;
+
+            Debug.WriteLine("Testing Filter2:    " + pat);
+            RetrieveSubfolders(dir,pat);
+            RetrieveFiles(dir,pat);
+
+            details1.Clear();
+            details2.Clear();
+            details1.Add(new FoderDetails() { FFNo = "Folders : " + dirs.Count.ToString(), IconPath = "folder_icon.png" });
+            details2.Add(new FoderDetails() { FFNo = "Files : " + fileList.Count.ToString(), IconPath = "file_icon.png" });
+            GetInitialItems();
+
+            LB.ItemsSource = items;
+            SP1.DataContext = details1;
+            SP2.DataContext = details2;
+        }
         /* The following function MoveWithinList(bool) is used to move up or down a list of (files/folders) within a given directory.
          * bool Up ---------> true, if we are to move up the list(i.e show previous 10 items) and false otherwise.
          */
@@ -215,8 +240,10 @@ namespace ProjectNetra
             
         }
         
-        private void RetrieveSubfolders(DirectoryInfo dir)
+        private void RetrieveSubfolders(DirectoryInfo dir,string pat)
         {
+            dirs.Clear();
+            dictFolder.Clear();
             DirectoryInfo[] subDirs = null;
             try
             {
@@ -235,7 +262,7 @@ namespace ProjectNetra
                     }
                     try
                     {
-                        DirectoryInfo[] subSubDirs = subDir.GetDirectories();
+                        DirectoryInfo[] subSubDirs = subDir.GetDirectories(pat,SearchOption.TopDirectoryOnly);
                         dirs.Add(subDirName);
                         dictFolder[subDirName] = subDir;
                     }
@@ -260,12 +287,18 @@ namespace ProjectNetra
             }
 
         }
-        private void RetrieveFiles(DirectoryInfo dir)
+        private void RetrieveFiles(DirectoryInfo dir,string pat)
         {
+            fileList.Clear();
+            dictFolder.Clear();
+            dictFiles.Clear();
             FileInfo[] files = null;
             try
             {
-                files = dir.GetFiles("*.*");
+                if (pat == "*")
+                    files = dir.GetFiles("*.*");
+                else
+                    files = dir.GetFiles(pat);
                 foreach (FileInfo file in files)
                 {
                     try
@@ -297,16 +330,6 @@ namespace ProjectNetra
                 Debug.WriteLine("Some Error occured in retrieving files of " + dir.FullName);
             }
 
-        }
-        
-        public DirectoryInfo GetSelectedFolder(int selectedItemNo)          // Gets information about the selected folder
-        {
-            return dictFolder[items[selectedItemNo - 1].Folder];
-        }
-        
-        public FileInfo GetSelectedFile(int selectedItemNo)                 // Gets information about the selected file
-        {
-            return dictFiles[items[selectedItemNo - 1].Folder];
         }
         public void ReadOutListItems(string parentDir,bool isBack, bool isNext, bool isUp, bool isDown, bool isFF , string ff)
         {

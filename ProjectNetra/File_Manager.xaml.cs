@@ -29,7 +29,7 @@ namespace ProjectNetra
         private int firstItemNo = 1,lastItemNo = 0;                                         // Tracks the first and last item no. of the set of items currently being displayed in GUI 
         private int noOfFiles = 0, noOfFolders = 0;                                         // Tracks the no. of files/folders in the current directory 
         private int noOfItems = 0;                                                          // Tracks no. of items displayed in the GUI
-
+        private DirectoryInfo pD = null;
         public File_Manager()
         {
             InitializeComponent();
@@ -102,7 +102,16 @@ namespace ProjectNetra
         {
             FileOrFolder();
         }
-       
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Filter(DropDown.SelectedIndex + 1);
+        }
+        private void KeyDownHandler(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Enter)
+                Open(fmp.GetSelectedItemNo());
+        }
+
         public void Back()
         {
             llnode = llnode.Previous;
@@ -128,6 +137,14 @@ namespace ProjectNetra
             N.IsEnabled = (llnode.Next != null);
             UpdateMembers("");
             MainFrame.Navigate(fmp);
+        }
+        public void Filter(int index)
+        {
+            if (fmp == null)                            // Occurs when the File_Manager() constructor is called
+                return;
+            var comboboxItem = (ComboBoxItem)DropDown.ItemContainerGenerator.ContainerFromIndex(index - 1);
+            fmp.Filter(pD,comboboxItem.Content.ToString());
+            UpdateMembers("");
         }
         public void Open(int selectedItemNo)
         {
@@ -156,6 +173,7 @@ namespace ProjectNetra
                 fmp = llnode.Value;
                 B.IsEnabled = true;
                 N.IsEnabled = false;
+                pD = dI;
                 UpdateMembers(dI.Name);
                 MainFrame.Navigate(fmp);
             }
@@ -179,8 +197,7 @@ namespace ProjectNetra
                             break;
                         case ".doc":
                         case ".docx":
-                            Document.MSWord_Controller mSWord = new Document.MSWord_Controller();
-                            mSWord.Open(fI.FullName);
+                            Document.MSWord_Controller mSWord = new Document.MSWord_Controller(fI.FullName);
                             break;
                         case ".mp3":
                         case ".mp4":
@@ -198,6 +215,7 @@ namespace ProjectNetra
             }
                         
         }
+
         public void Up()
         {
             fmp.MoveWithinList(true);
@@ -251,6 +269,19 @@ namespace ProjectNetra
                         FileOrFolder();
                     else
                         Speak_Listen.Speak("Sorry, No such control is present");
+                    break;
+                case "Filter 1":
+                case "Filter 2":
+                case "Filter 3":
+                case "Filter 4":
+                case "Filter 5":
+                case "Filter 6":
+                case "Filter 7":
+                case "Filter 8":
+                case "Filter 9":
+                case "Filter 10":
+                case "Filter 11":
+                    Filter(int.Parse(cmd.Substring(7)));
                     break;
                 default:
                     if (isFolder == 0)

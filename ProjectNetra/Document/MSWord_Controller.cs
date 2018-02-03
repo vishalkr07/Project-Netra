@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,26 +14,46 @@ namespace ProjectNetra.Document
         private Word.Application wordApp = null;
         private Word.Document doc = null;
         private Word.Documents docs = null;
-        public MSWord_Controller()                              // Use it when user aks open MS Word
+        private bool isOpenFirstTime = true;
+        private List<string> wordFiles = new List<string>();
+
+        public MSWord_Controller()                             
         {
             wordApp = new Word.Application();
             wordApp.Visible = true;
-            doc = wordApp.Documents.Add();
-            
+            docs = wordApp.Documents;
+            doc = docs.Add();
         }
-        public void Open(string filepath)
+        public MSWord_Controller(string filepath)
         {
-            /*
-             *  TODO 1: Check for changes in the current document
-             *      TODO 1.1: YES --> Prompt the user for "save/save as/close without saving"
-             *      TODO 1.2: NO  --> Close the currently opened file
-             */
-            doc.Close();
-            doc = wordApp.Documents.Open(filepath);
+            wordApp = new Word.Application();
+            wordApp.Visible = true;
+            docs = wordApp.Documents;
+            doc = docs.Open(filepath);
+        }
+        public void Open()
+        {
+            /*************   Get the list of all .doc/.docx files in the system    ************/
+            if (isOpenFirstTime)                    // To be executed only first time this function is called
+            {
+                string[] drives = Environment.GetLogicalDrives();
+                foreach (string dr in drives)
+                {
+                    wordFiles.AddRange(Directory.GetFiles(dr,"*.doc"));
+                    wordFiles.AddRange(Directory.GetFiles(dr,"*.docx"));
+                }
+                isOpenFirstTime = false;
+            }
+            if(wordFiles.Count == 0)
+            {
+                Speak_Listen.Speak("Sorry, your system has no .doc or .docx file");
+            }
+            /********   End of getting the list of all .doc/.docx files in the system  ********/
+
         }
         public void New()
         {
-            doc = wordApp.Documents.Add();
+            doc = docs.Add();
         }
         public void CloseAll()
         {
