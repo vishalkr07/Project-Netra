@@ -55,6 +55,8 @@ namespace ProjectNetra
         public static void LoadDynamicGrammer()
         {
             GrammarBuilder builder = new GrammarBuilder();
+            if (fmFirstItemNo > fmLastItemNo)           // To Ensure that there is atleast one string to be treated as a grammar
+                fmFirstItemNo = fmLastItemNo;   
             builder.Append(new Choices(ProjectResource.GetNoGrammer(fmFirstItemNo, fmLastItemNo)));
             DynamicGrammer = new Grammar(builder);
             DynamicGrammer.Name = "FMDynamicGrammar";

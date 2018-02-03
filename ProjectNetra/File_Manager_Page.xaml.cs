@@ -29,8 +29,8 @@ namespace ProjectNetra
     {
         /* Constraint:  |items| <=10 ; We split the list of folders/files within a directory into set of maximum 10 elements  */
         private ObservableCollection<Folders> items = new ObservableCollection<Folders>();                  // Used to display Files/Folders in list for GUI 
-        private ObservableCollection<FoderDetails> details1 = new ObservableCollection<FoderDetails>();                                     // Used to display details in the GUI StackPanel1
-        private ObservableCollection<FoderDetails> details2 = new ObservableCollection<FoderDetails>();                                     // Used to display details in the GUI StackPanel2
+        private FoderDetails details1 = null;                                                               // Used to display details in the GUI StackPanel1
+        private FoderDetails details2 = null;                                                               // Used to display details in the GUI StackPanel2
         private List<string> dirs = new List<string>();                                                     // Used to dictate the list of directories to the users
         private List<string> fileList = new List<string>();                                                 // Used to dictate the list of files to the users
         private Dictionary<string, DirectoryInfo> dictFolder = new Dictionary<string, DirectoryInfo>();     // Used to reference to the directory that the user selects 
@@ -38,6 +38,7 @@ namespace ProjectNetra
         private short isFolder = 1;                                                                         // Will have 3 values: 0 -> none, 1->folder, 2->file
         private int firstItemNo = 1,lastItemNo = 0;                                                         // Tracks the first and last item no. of the set of items currently being displayed in GUI 
         private string filter = "";
+        private DirectoryInfo pD = null;
 
         public File_Manager_Page()                                      // To be invoked only for getting the Drives and Special Folders
         {
@@ -79,12 +80,11 @@ namespace ProjectNetra
             dictFolder["Music"] = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.MyMusic));
             dictFolder["Videos"] = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.MyVideos));
 
-            details1.Add(new FoderDetails() { FFNo = "Drives : " + (items.Count - 5).ToString(), IconPath = "local_disk.ico" });
-            details2.Add(new FoderDetails() { FFNo = "Folders : 5", IconPath = "folder_icon.png" });
+            details1 = new FoderDetails() { FFNo = "Drives : " + (items.Count - 5).ToString(), IconPath = "local_disk.ico" };
+            details2 = new FoderDetails() { FFNo = "Folders : 5", IconPath = "folder_icon.png" };
 
             LB.ItemsSource = items;
-            SP1.DataContext = details1;
-            SP2.DataContext = details2;
+            UpdateStackPanel();
 
             lastItemNo = dirs.Count();
         }
@@ -92,19 +92,45 @@ namespace ProjectNetra
         public File_Manager_Page(DirectoryInfo dir)                        // To be invoked for getting the contents within a Folder/Drive
         {
             InitializeComponent();
-
-            Filter(dir,"None");
+            pD = dir;
+            Filter("None");
         }
 
         public void Dispose()                                    // For memory management
         {
             items.Clear();
-            details1.Clear();
-            details2.Clear();
             dirs.Clear();            
             fileList.Clear();
             dictFolder.Clear();
             dictFiles.Clear();
+        }
+
+        private void UpdateStackPanel()
+        {
+            SP1.Children.Clear();
+            Image img1 = new Image();
+            img1.Width = 30;
+            img1.Height = 30;
+            img1.Margin = new Thickness(0, 0, 5, 0);
+            img1.Source = new BitmapImage(new Uri(details1.IconPath, UriKind.Relative));
+            SP1.Children.Add(img1);
+            TextBlock tb1 = new TextBlock();
+            tb1.VerticalAlignment = VerticalAlignment.Center;                      
+            tb1.Text = details1.FFNo;
+            SP1.Children.Add(tb1);
+
+            SP2.Children.Clear();
+            Image img2 = new Image();
+            img2.Width = 30;
+            img2.Height = 30;
+            img2.Margin = new Thickness(0, 0, 5, 0);
+            img2.Source = new BitmapImage(new Uri(details2.IconPath, UriKind.Relative));
+            SP2.Children.Add(img2);
+            TextBlock tb2 = new TextBlock();
+            tb2.VerticalAlignment = VerticalAlignment.Center;
+            tb2.Text = details2.FFNo;
+            SP2.Children.Add(tb2);
+
         }
         public short GetFolderStatus()
         {
@@ -135,6 +161,10 @@ namespace ProjectNetra
         public int GetSelectedItemNo()
         {
             return (LB.SelectedIndex + 1);
+        }
+        public DirectoryInfo GetParentDirectory()
+        {
+            return pD;
         }
         public DirectoryInfo GetSelectedFolder(int selectedItemNo)          // Gets information about the selected folder
         {
@@ -169,10 +199,12 @@ namespace ProjectNetra
             else
             {
                 isFolder = 0;
+                firstItemNo = 1;
+                lastItemNo = 0;
             }
         }
 
-        public void Filter(DirectoryInfo dir,string pat)
+        public void Filter(string pat)
         {
             Debug.WriteLine("Testing Filter1:    "+pat);
             if (pat == filter)
@@ -182,18 +214,16 @@ namespace ProjectNetra
             pat = "*" + pat;
 
             Debug.WriteLine("Testing Filter2:    " + pat);
-            RetrieveSubfolders(dir,pat);
-            RetrieveFiles(dir,pat);
-
-            details1.Clear();
-            details2.Clear();
-            details1.Add(new FoderDetails() { FFNo = "Folders : " + dirs.Count.ToString(), IconPath = "folder_icon.png" });
-            details2.Add(new FoderDetails() { FFNo = "Files : " + fileList.Count.ToString(), IconPath = "file_icon.png" });
+            RetrieveSubfolders(pat);
+            RetrieveFiles(pat);
+            
+            details1 = new FoderDetails() { FFNo = "Folders : " + dirs.Count.ToString(), IconPath = "folder_icon.png" };
+            details2 = new FoderDetails() { FFNo = "Files : " + fileList.Count.ToString(), IconPath = "file_icon.png" };
             GetInitialItems();
 
             LB.ItemsSource = items;
-            SP1.DataContext = details1;
-            SP2.DataContext = details2;
+            UpdateStackPanel();
+            filter = pat;
         }
         /* The following function MoveWithinList(bool) is used to move up or down a list of (files/folders) within a given directory.
          * bool Up ---------> true, if we are to move up the list(i.e show previous 10 items) and false otherwise.
@@ -240,14 +270,14 @@ namespace ProjectNetra
             
         }
         
-        private void RetrieveSubfolders(DirectoryInfo dir,string pat)
+        private void RetrieveSubfolders(string pat)
         {
             dirs.Clear();
             dictFolder.Clear();
             DirectoryInfo[] subDirs = null;
             try
             {
-                subDirs = dir.GetDirectories();
+                subDirs = pD.GetDirectories(pat);
                 foreach (DirectoryInfo subDir in subDirs)
                 {
                     string subDirName;
@@ -262,7 +292,7 @@ namespace ProjectNetra
                     }
                     try
                     {
-                        DirectoryInfo[] subSubDirs = subDir.GetDirectories(pat,SearchOption.TopDirectoryOnly);
+                        DirectoryInfo[] subSubDirs = subDir.GetDirectories();
                         dirs.Add(subDirName);
                         dictFolder[subDirName] = subDir;
                     }
@@ -283,22 +313,21 @@ namespace ProjectNetra
             }
             catch (Exception e)                           // Any other errors
             {
-                Debug.WriteLine("Some Error occured in retrieving subfolders of " + dir.FullName);
+                Debug.WriteLine("Some Error occured in retrieving subfolders of " + pD.FullName);
             }
 
         }
-        private void RetrieveFiles(DirectoryInfo dir,string pat)
+        private void RetrieveFiles(string pat)
         {
             fileList.Clear();
-            dictFolder.Clear();
             dictFiles.Clear();
             FileInfo[] files = null;
             try
             {
                 if (pat == "*")
-                    files = dir.GetFiles("*.*");
+                    files = pD.GetFiles("*.*");
                 else
-                    files = dir.GetFiles(pat);
+                    files = pD.GetFiles(pat);
                 foreach (FileInfo file in files)
                 {
                     try
@@ -327,7 +356,7 @@ namespace ProjectNetra
             }
             catch (Exception e)                           // Any other errors
             {
-                Debug.WriteLine("Some Error occured in retrieving files of " + dir.FullName);
+                Debug.WriteLine("Some Error occured in retrieving files of " + pD.FullName);
             }
 
         }
@@ -372,10 +401,13 @@ namespace ProjectNetra
                 Speak_Listen.AddPrompt("Say Down to move down the list");
             if (isFF)
                 Speak_Listen.AddPrompt("Say " + ff + " to dictate the " + ff);
+            if (pD != null)
+                Speak_Listen.AddPrompt("Say Filter to filter the list");
             
             Speak_Listen.AddPrompt("Say Repeat to repeat the list");
             Speak_Listen.SpeakPrompt();
         }
+        
         
     }
 

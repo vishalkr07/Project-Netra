@@ -21,7 +21,6 @@ namespace ProjectNetra
     /// </summary>
     public partial class File_Manager : Window
     {
-        private Dictionary<string, int> number = new Dictionary<string, int>();
         private File_Manager_Page fmp = null; 
         private LinkedList<File_Manager_Page> ll = new LinkedList<File_Manager_Page>();
         private LinkedListNode<File_Manager_Page> llnode = null,temp = null, nxt = null;
@@ -30,21 +29,12 @@ namespace ProjectNetra
         private int noOfFiles = 0, noOfFolders = 0;                                         // Tracks the no. of files/folders in the current directory 
         private int noOfItems = 0;                                                          // Tracks no. of items displayed in the GUI
         private DirectoryInfo pD = null;
+        private bool isFilterActive = false;
+
         public File_Manager()
         {
             InitializeComponent();
-
-            number["one"] = 1;
-            number["two"] = 2;
-            number["three"] = 3;
-            number["four"] = 4;
-            number["five"] = 5;
-            number["six"] = 6;
-            number["seven"] = 7;
-            number["eight"] = 8;
-            number["nine"] = 9;
-            number["ten"] = 10;
-
+            
             fmp = new File_Manager_Page();
             B.IsEnabled = N.IsEnabled = false;
             UpdateMembers("");
@@ -66,6 +56,8 @@ namespace ProjectNetra
             noOfItems = (lastItemNo - firstItemNo + 1);
             noOfFiles = fmp.GetNoOfFiles();
             noOfFolders = fmp.GetNoOfFolders();
+            pD = fmp.GetParentDirectory();
+            DropDown.IsEnabled = (pD != null);
             F.Content = (isFolder == 2 ? "Folders" : "Files");
             F.IsEnabled = (noOfFolders != 0) && (noOfFiles != 0);
             U.IsEnabled = (firstItemNo != 1) || ((isFolder==2) && (firstItemNo == 1) && (noOfFolders != 0));
@@ -111,9 +103,16 @@ namespace ProjectNetra
             if(e.Key == Key.Enter)
                 Open(fmp.GetSelectedItemNo());
         }
+        private void ButtonFilterActivate(object sender, RoutedEventArgs e)
+        {
+            isFilterActive = true;
+        }
 
         public void Back()
         {
+            /*** revert the filter selection to none  **/
+            CB1.IsSelected = true;                       // ComboBox_SelectionChanged event will be triggered
+            /********************************/
             llnode = llnode.Previous;
             fmp = llnode.Value;
             N.IsEnabled = true;
@@ -124,6 +123,9 @@ namespace ProjectNetra
 
         public void Next()
         {
+            /*** revert the filter selection to none  **/
+            CB1.IsSelected = true;                      // ComboBox_SelectionChanged event will be triggered
+            /********************************/
             llnode = llnode.Next;
             fmp = llnode.Value;
             B.IsEnabled = true;
@@ -138,12 +140,11 @@ namespace ProjectNetra
             UpdateMembers("");
             MainFrame.Navigate(fmp);
         }
-        public void Filter(int index)
+        private void Filter(int index)
         {
-            if (fmp == null)                            // Occurs when the File_Manager() constructor is called
+            if (fmp == null || pD == null)                            // Occurs when the File_Manager() constructor is called
                 return;
-            var comboboxItem = (ComboBoxItem)DropDown.ItemContainerGenerator.ContainerFromIndex(index - 1);
-            fmp.Filter(pD,comboboxItem.Content.ToString());
+            fmp.Filter(((ComboBoxItem)(DropDown.Items[index - 1])).Content.ToString());
             UpdateMembers("");
         }
         public void Open(int selectedItemNo)
@@ -173,7 +174,6 @@ namespace ProjectNetra
                 fmp = llnode.Value;
                 B.IsEnabled = true;
                 N.IsEnabled = false;
-                pD = dI;
                 UpdateMembers(dI.Name);
                 MainFrame.Navigate(fmp);
             }
@@ -231,72 +231,113 @@ namespace ProjectNetra
             fmp.SetFolderStatus(F.Content.ToString()=="Folders");
             UpdateMembers("");
         }
+
+        private void ReadOutFilters()
+        {
+            Speak_Listen.StartPromptBuilder();
+            for (int i = 1; i < 12;i++)
+            {
+                //string s = ((ComboBoxItem)DropDown.ItemContainerGenerator.ContainerFromIndex(i)).Content.ToString();
+                string s = ((ComboBoxItem)(DropDown.Items[i - 1])).Content.ToString();
+                Speak_Listen.AddPrompt("Say "+ (i.ToString()) + " to filter " + s);
+            }
+            Speak_Listen.AddPrompt("Say Repeat to repeat the list");
+            Speak_Listen.SpeakPrompt();
+        }
         public void Instruct(string cmd)
         {
             Debug.WriteLine("File Manager Input:  " + cmd);
+            firstItemNo = fmp.GetFirstItemNo();
+            lastItemNo = fmp.GetLastItemNo();
             switch (cmd)
             {
                 case "Back":
+                    isFilterActive = false;
                     if (B.IsEnabled)
-                        Back();
+                        Back();         
                     else
                         Speak_Listen.Speak("Sorry, No such control is present");
                     break;
                 case "Next":
-                    if(N.IsEnabled)
-                        Next();
+                    isFilterActive = false;
+                    if (N.IsEnabled)
+                        Next(); 
                     else
                         Speak_Listen.Speak("Sorry, No such control is present");
                     break;
                 case "Repeat":
-                    Repeat();
+                    if (isFilterActive)
+                    {
+                        ReadOutFilters();
+                        firstItemNo = 1;
+                        lastItemNo = 11;
+                    }
+                    else
+                        Repeat();
                     break;
                 case "Up":
-                    if(U.IsEnabled)
+                    isFilterActive = false;
+                    if (U.IsEnabled)
                         Up();
                     else
                         Speak_Listen.Speak("Sorry, No such control is present");
                     break;
                 case "Down":
-                    if(D.IsEnabled)
+                    isFilterActive = false;
+                    if (D.IsEnabled)
                         Down();
                     else
                         Speak_Listen.Speak("Sorry, No such control is present");
                     break;
                 case "Files":                    
                 case "Folders":
-                    if(F.IsEnabled)
-                        FileOrFolder();
+                    isFilterActive = false;
+                    if (F.IsEnabled)
+                    {
+                        if (cmd == F.Content.ToString())
+                            FileOrFolder();
+                        else
+                            Repeat();
+                    }
                     else
                         Speak_Listen.Speak("Sorry, No such control is present");
                     break;
-                case "Filter 1":
-                case "Filter 2":
-                case "Filter 3":
-                case "Filter 4":
-                case "Filter 5":
-                case "Filter 6":
-                case "Filter 7":
-                case "Filter 8":
-                case "Filter 9":
-                case "Filter 10":
-                case "Filter 11":
-                    Filter(int.Parse(cmd.Substring(7)));
-                    break;
-                default:
-                    if (isFolder == 0)
-                    {
-                        Speak_Listen.Speak("Sorry, this folder is empty");
-                    }
+                case "Filter":
+                    if (pD == null)                          // If this is the home page of the file manager
+                        Speak_Listen.Speak("Sorry, No such control is present");
                     else
                     {
-                        if(number[cmd] > noOfItems)    // Item no. selected is not actually present in the list
+                        isFilterActive = true;
+                        ReadOutFilters();
+                        firstItemNo = 1;
+                        lastItemNo = 11;
+                    }
+                    break;
+                default:                                     //  Number input
+                    if (isFilterActive)                      //  Number input for filters
+                    {
+                        Filter(int.Parse(cmd));
+                        isFilterActive = false;
+                    }
+                    else                                     //  Number input for file/folder selection
+                    {
+                        if (isFolder == 0)
                         {
-                            Speak_Listen.Speak("Sorry, wrong choice. Say a number from 1 to " + noOfItems.ToString());
+                            Speak_Listen.Speak("Sorry, this folder is empty");
                         }
                         else
                         {
-                            Open(number[cmd]);
+                            /*
+                            if (number[cmd] > noOfItems)          // Item no. selected is not actually present in the list
+                            {
+                                Speak_Listen.Speak("Sorry, wrong choice. Say a number from 1 to " + noOfItems.ToString());
+                            }
+                            else
+                            {
+                                Open(number[cmd]);
+                            }*/
+
+                            Open((((int.Parse(cmd))-1)%10) + 1);
                         }
                     }
                     break;

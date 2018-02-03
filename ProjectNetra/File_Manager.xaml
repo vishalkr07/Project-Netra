@@ -17,8 +17,8 @@
         <Button x:Name="U" Content="Up" HorizontalAlignment="Left" Height="36" Margin="109,519,0,-49" VerticalAlignment="Top" Width="51" Click="ButtonUp"/>
         <Button x:Name="D" Content="Down" HorizontalAlignment="Left" Height="36" Margin="160,519,0,-49" VerticalAlignment="Top" Width="52" Click="ButtonDown"/>
         <Button x:Name="F" HorizontalAlignment="Left" Height="36" Margin="273,519,0,-49" VerticalAlignment="Top" Width="71" Click="ButtonFileFolder"/>
-        <ComboBox x:Name="DropDown" HorizontalAlignment="Left" Height="36" Margin="349,519,0,-49" Width="120" SelectionChanged="ComboBox_SelectionChanged" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
-            <ComboBoxItem IsSelected="True">None</ComboBoxItem>
+        <ComboBox x:Name="DropDown" HorizontalAlignment="Left" Height="36" Margin="349,519,0,-49" Width="66" SelectionChanged="ComboBox_SelectionChanged" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+            <ComboBoxItem x:Name="CB1" IsSelected="True">None</ComboBoxItem>
             <ComboBoxItem>.pdf</ComboBoxItem>
             <ComboBoxItem>.txt</ComboBoxItem>
             <ComboBoxItem>.doc</ComboBoxItem>
@@ -30,6 +30,7 @@
             <ComboBoxItem>.mpeg</ComboBoxItem>
             <ComboBoxItem>.avi</ComboBoxItem>
         </ComboBox>
+        <Button Content="Filter" HorizontalAlignment="Left" Height="28" Margin="269,560,0,-82" VerticalAlignment="Top" Width="75" Click="ButtonFilterActivate"/>
 
     </Grid>
 </Window>

@@ -92,7 +92,8 @@ namespace ProjectNetra
             "Down",
             "Files",
             "Folders",
-            "Repeat"
+            "Repeat",
+            "Filter"
         };
 
         public static string[] GetNoGrammer(int l, int r)
@@ -100,7 +101,7 @@ namespace ProjectNetra
             string[] s = new string[(r-l+1)];
             for (int i = l; i <= r; i++)
             {
-                s[i - 1] = i.ToString();
+                s[i - l] = i.ToString();
             }
             return s;
         }
