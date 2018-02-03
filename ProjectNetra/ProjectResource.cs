@@ -92,23 +92,13 @@ namespace ProjectNetra
             "Down",
             "Files",
             "Folders",
-            "Repeat",
-            "one",
-            "two",
-            "three",
-            "four",
-            "five",
-            "six",
-            "seven",
-            "eight",
-            "nine",
-            "ten"
+            "Repeat"
         };
 
-        public static string[] GetNoGrammer(int no)
+        public static string[] GetNoGrammer(int l, int r)
         {
-            string[] s = new string[no];
-            for (int i = 1; i <= no; i++)
+            string[] s = new string[(r-l+1)];
+            for (int i = l; i <= r; i++)
             {
                 s[i - 1] = i.ToString();
             }

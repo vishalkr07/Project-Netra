@@ -65,6 +65,9 @@
     <Reference Include="ImapX, Version=2.0.0.18, Culture=neutral, PublicKeyToken=5992873d65130d1f, processorArchitecture=MSIL">
       <HintPath>..\packages\ImapX.2.0.0.18\lib\net46\ImapX.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Office.Interop.Word, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="pdfbox-1.8.9, Version=1.8.9.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Pdfbox-IKVM.1.8.9\lib\pdfbox-1.8.9.dll</HintPath>
     </Reference>
@@ -218,16 +221,7 @@
     <COMReference Include="Microsoft.Office.Core">
       <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
       <VersionMajor>2</VersionMajor>
-      <VersionMinor>8</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>primary</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-    <COMReference Include="Microsoft.Office.Interop.Word">
-      <Guid>{00020905-0000-0000-C000-000000000046}</Guid>
-      <VersionMajor>8</VersionMajor>
-      <VersionMinor>7</VersionMinor>
+      <VersionMinor>4</VersionMinor>
       <Lcid>0</Lcid>
       <WrapperTool>primary</WrapperTool>
       <Isolated>False</Isolated>

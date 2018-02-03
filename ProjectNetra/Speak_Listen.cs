@@ -26,7 +26,10 @@ namespace ProjectNetra
             MediaPlayerGrammar,
             CalculatorGrammar,
             FileManagerGrammar,
+            DynamicGrammer,
             AssistantGrammar;
+
+        private static int fmFirstItemNo, fmLastItemNo;
 
         private static void CreateGrammar(ref Grammar g, string[] ar, string name, bool Enable = false)         // Build Grammars for speech recognition
         {
@@ -49,18 +52,19 @@ namespace ProjectNetra
             CreateGrammar(ref FileManagerGrammar, ProjectResource.FileManagerCommand, "FileManagerGrammar");
         }
 
-        public static Grammar LoadDynamicGrammer(int no)
+        public static void LoadDynamicGrammer()
         {
             GrammarBuilder builder = new GrammarBuilder();
-            builder.Append(new Choices(ProjectResource.GetNoGrammer(no)));
-            Grammar g = new Grammar(builder);
-            recog.LoadGrammar(g);
-            return g;
+            builder.Append(new Choices(ProjectResource.GetNoGrammer(fmFirstItemNo, fmLastItemNo)));
+            DynamicGrammer = new Grammar(builder);
+            DynamicGrammer.Name = "FMDynamicGrammar";
+            recog.LoadGrammar(DynamicGrammer);
         }
 
-        public static void UnoadDynamicGrammer(ref Grammar g)
+        public static void UnloadDynamicGrammer()
         {
-            recog.UnloadGrammar(g);
+            recog.UnloadGrammar(DynamicGrammer);
+            DynamicGrammer = null;
         }
 
         public static void EnableGrammar(ref Grammar g, bool b)
@@ -85,6 +89,11 @@ namespace ProjectNetra
         {
             EnableGrammar(ref FileManagerGrammar, true);
             fm = obj;
+            Tuple<int, int> tp = fm.GetItemRange();
+            fmFirstItemNo = tp.Item1;
+            fmLastItemNo = tp.Item2;
+            LoadDynamicGrammer();
+            recog.RequestRecognizerUpdate();
         }
 
         public static void Initialize()                                          // Initialize components
@@ -123,19 +132,28 @@ namespace ProjectNetra
 
             /**************************************************************/
 
-            if (mp != null && mp.IsActive)
+            if (mp != null && mp.IsActive && grammarName == "MediaPlayerGrammar")
             {
                 mp.Instruct(resultText);
             }
 
-            if (calc != null && calc.IsActive)
+            if (calc != null && calc.IsActive && grammarName == "CalculatorGrammar")
             {
                 calc.Instruct(resultText);
             }
 
-            if (fm != null && fm.IsActive)
+            if (fm != null && fm.IsActive && (grammarName == "FileManagerGrammar" || grammarName == "FMDynamicGrammar") )
             {
                 fm.Instruct(resultText);
+                Tuple<int,int> tp = fm.GetItemRange();
+                if (tp.Item1 != fmFirstItemNo || tp.Item2 != fmLastItemNo) {
+                    fmFirstItemNo = tp.Item1;
+                    fmLastItemNo = tp.Item2;
+                    UnloadDynamicGrammer();
+                    recog.RequestRecognizerUpdate();
+                    LoadDynamicGrammer();
+                    recog.RequestRecognizerUpdate();
+                }
             }
 
             /**************************************************************/
