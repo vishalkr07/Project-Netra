@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,6 +21,7 @@ namespace ProjectNetra
 
     public partial class File_Manager : Window
     {
+        private List<char> notAllowedCharacters = new List<char>(new char[] { '/','\\','"','|',':','?','<','>','*',' ' });
         private Dictionary<string, int> cbItem = new Dictionary<string, int>();             // For retireving comboboxitem no. for a specific comboboxitem
         private File_Manager_Page fmp = null; 
         private LinkedList<File_Manager_Page> ll = new LinkedList<File_Manager_Page>();
@@ -30,7 +31,7 @@ namespace ProjectNetra
         private int noOfFiles = 0, noOfFolders = 0;                                         // Tracks the no. of files/folders in the current directory 
         private int noOfItems = 0;                                                          // Tracks no. of items displayed in the GUI
         private DirectoryInfo pD = null;
-        private bool isFilterActive = false;
+        private bool isFilterActive = false,isNewFolder = false;
         private string filter = "*";
 
         public File_Manager()
@@ -52,7 +53,8 @@ namespace ProjectNetra
             fmp = new File_Manager_Page();
             ll.AddFirst(fmp);
             llnode = ll.First;
-            B.IsEnabled = N.IsEnabled = false;
+            TB1.Text = "";
+            B.IsEnabled = N.IsEnabled = TB1.IsEnabled = false;
             UpdateMembers(true);
             MainFrame.Navigate(fmp);
         }
@@ -60,6 +62,18 @@ namespace ProjectNetra
         public Tuple<int,int> GetItemRange()
         {
             return new Tuple<int, int>(firstItemNo,lastItemNo);
+        }
+        private bool Validate(string s)
+        {
+            s = s.Trim(new char[] { ' ' });
+            if (s.Length == 0)
+                return false;
+            foreach(var c in notAllowedCharacters)
+            {
+                if (s.Contains(c))
+                    return false;
+            }
+            return true;
         }
 
         // bool ack ---> determines whether to give acknowledgement on opening a folder; if(ack == True) ---> Back() | Next() | Open() has been called or Home page is opened.
@@ -72,6 +86,9 @@ namespace ProjectNetra
             noOfFiles = fmp.GetNoOfFiles();
             noOfFolders = fmp.GetNoOfFolders();
             pD = fmp.GetParentDirectory();
+            filter = fmp.GetFilterStatus();
+            filter = (filter == "*" ? "None" : filter.Substring(1));
+
             DropDown.IsEnabled = (pD != null);
             F.Content = (isFolder == 2 ? "Folders" : "Files");
             F.IsEnabled = (noOfFolders != 0) && (noOfFiles != 0);
@@ -79,10 +96,11 @@ namespace ProjectNetra
             D.IsEnabled = ((isFolder == 1) && ((lastItemNo < noOfFolders) || (noOfFiles != 0))) || ((isFolder == 2) && (lastItemNo < noOfFiles));
             O.IsEnabled = (isFolder != 0);
             FilterBtn.IsEnabled = (pD!=null);
-            filter = fmp.GetFilterStatus();
-            filter = (filter == "*" ? "None" : filter.Substring(1));
+            NF1.IsEnabled = NF2.IsEnabled = DF1.IsEnabled = DF2.IsEnabled = RNF1.IsEnabled = RNF2.IsEnabled = (pD!=null);
             ((ComboBoxItem)DropDown.Items[cbItem[filter]-1]).IsSelected = true;     // ComboBox_SelectionChanged Event is Triggered
+
             UpdateFilter(false);
+
             if(ack)
                 fmp.AcknowlwdgeOpen();
         }
@@ -145,8 +163,17 @@ namespace ProjectNetra
             {
                 if (isFilterActive)
                     Instruct((DropDown.SelectedIndex + 1).ToString());
-                else
+                else if (TB1.IsEnabled)
+                {
+                    if (isNewFolder)
+                        CreateDirectory(TB1.Text);
+                    else
+                        CreateFile(TB1.Text);
+                }
+                else 
                     Instruct(fmp.GetSelectedItemNo().ToString());
+
+                R.Focus();
             }
                 
         }
@@ -154,7 +181,32 @@ namespace ProjectNetra
         {
             Instruct("Filter");
         }
-        
+        private void ButtonNewFolderBtn(object sender, RoutedEventArgs e)
+        {
+            Instruct("New Folder");
+        }
+        private void ButtonNewFileBtn(object sender, RoutedEventArgs e)
+        {
+            Instruct("New File");
+        }
+
+        private void ButtonDeleteFolderBtn(object sender, RoutedEventArgs e)
+        {
+            Instruct("Delete Folder");
+        }
+        private void ButtonDeleteFileBtn(object sender, RoutedEventArgs e)
+        {
+            Instruct("Delete File");
+        }
+        private void ButtonRenameFolderBtn(object sender, RoutedEventArgs e)
+        {
+            Instruct("Rename Folder");
+        }
+        private void ButtonRenameFileBtn(object sender, RoutedEventArgs e)
+        {
+            Instruct("Rename File");
+        }
+
 
         private void Back()
         {
@@ -279,23 +331,62 @@ namespace ProjectNetra
         }
         private void CreateDirectory(string dirName)
         {
+            if (!Validate(dirName))
+            {
+                /*
+                 *  TODO 1: Most of the chars in"notAllowedCharacters" are not recognised by SpeechSynthesis. Try to hardcode is.
+                 */
+                Speak_Listen.StartPromptBuilder();
+                Speak_Listen.AddPrompt("A folder name can't contain any of these characters:");
+                foreach (var c in notAllowedCharacters)
+                    Speak_Listen.AddPrompt(c+"");
+                Speak_Listen.AddPrompt("Please type again");
+                Speak_Listen.SpeakPrompt();
+                return;
+            }
             string pathString = Path.Combine(pD.FullName, dirName);
             if (Directory.Exists(pathString))
             {
                 Debug.WriteLine("Directory Already Present");
+                Speak_Listen.Speak("Sorry, Folder Already Exists.");
                 return;
             }
             Directory.CreateDirectory(pathString);
+            Refresh();
+            Speak_Listen.Speak("A new folder named "+dirName+" is created.");
         }
         private void CreateFile(string fileName)
         {
+            // Regular Expression (for File Format): Any name with atleast one letter in [a-z,A-Z,0-9] before "." and atleast one letter in [a-z,A-Z,0-9] after "." 
+            Regex regex = new Regex(@"^[a-zA-Z0-9]+\.[a-zA-Z0-9]+$");      
+            if (!Validate(fileName))
+            {
+                /*
+                 *  TODO 1: Most of the chars in"notAllowedCharacters" are not recognised by SpeechSynthesis. Try to hardcode is.
+                 */
+                Speak_Listen.StartPromptBuilder();
+                Speak_Listen.AddPrompt("A file name can't contain any of these characters:");
+                foreach (var c in notAllowedCharacters)
+                    Speak_Listen.AddPrompt(c + "");
+                Speak_Listen.AddPrompt("Please type again");
+                Speak_Listen.SpeakPrompt();
+                return;
+            }
+            if (!regex.IsMatch(fileName))
+            {
+                Speak_Listen.Speak("File name can't be without an extension.");
+                return;
+            }
             string pathString = Path.Combine(pD.FullName, fileName);
             if (File.Exists(pathString))
             {
-                Debug.WriteLine("Directory Already Present");
+                Debug.WriteLine("File Already Present");
+                Speak_Listen.Speak("Sorry, File Already Exists.");
                 return;
             }
-            File.Create(fileName);
+            File.Create(pathString);
+            Refresh();
+            Speak_Listen.Speak("A new file named " + fileName + " is created.");
         }
         private void DeleteFile(string pathString)
         {
@@ -361,6 +452,9 @@ namespace ProjectNetra
                 lastItemNo = fmp.GetLastItemNo();
             }
 
+            TB1.Text = "";
+            TB1.IsEnabled = false;
+            BORDER.BorderBrush = Brushes.Gray;
             Speak_Listen.Speak("");                                 // Tricky way to interrupt the file manager Voice Output
 
             /* 
@@ -440,8 +534,82 @@ namespace ProjectNetra
                     {
                         UpdateFilter(true);
                         ReadOutFilters();
-                        firstItemNo = 1;
-                        lastItemNo = 11;
+                        firstItemNo = 1;                    // Use to dynamically load grammar in Speak_Listen class
+                        lastItemNo = 11;                    // Use to dynamically load grammar in Speak_Listen class
+                    }
+                    break;
+                case "New Folder":
+                    UpdateFilter(false);
+                    isNewFolder = true;
+                    if (NF1.IsEnabled)
+                    {
+                        BORDER.BorderBrush = Brushes.Yellow;
+                        Speak_Listen.Speak("Type the name of the new folder.");
+                        TB1.IsEnabled = true;
+                        TB1.Focus();
+                    }
+                    else
+                        Speak_Listen.Speak("Sorry, No such control is present");
+                    break;
+                case "New File":
+                    UpdateFilter(false);
+                    isNewFolder = false;
+                    if (NF2.IsEnabled)
+                    {
+                        BORDER.BorderBrush = Brushes.Yellow;
+                        Speak_Listen.Speak("Type the name of the new file.");
+                        TB1.IsEnabled = true;
+                        TB1.Focus();
+                    }
+                    else
+                        Speak_Listen.Speak("Sorry, No such control is present");
+                    break;
+                case "Delete Folder":
+                    UpdateFilter(false);
+                    int sel = fmp.GetSelectedItemNo() - 1 + firstItemNo;
+                    if (sel >= firstItemNo && sel <= lastItemNo)
+                    {
+
+                    }
+                    else
+                    {
+                        Speak_Listen.Speak("You haven't selected any item.");
+                    }
+                    break;
+                case "Delete File":
+                    UpdateFilter(false);
+                    sel = fmp.GetSelectedItemNo() - 1 + firstItemNo;
+                    if (sel >= firstItemNo && sel <= lastItemNo)
+                    {
+
+                    }
+                    else
+                    {
+                        Speak_Listen.Speak("You haven't selected any item.");
+                    }
+                    break;
+                case "Rename Folder":
+                    UpdateFilter(false);
+                    sel = fmp.GetSelectedItemNo() - 1 + firstItemNo;
+                    if (sel >= firstItemNo && sel <= lastItemNo)
+                    {
+
+                    }
+                    else
+                    {
+                        Speak_Listen.Speak("You haven't selected any item.");
+                    }
+                    break;
+                case "Rename File":
+                    UpdateFilter(false);
+                    sel = fmp.GetSelectedItemNo() - 1 + firstItemNo;
+                    if (sel >= firstItemNo && sel <= lastItemNo)
+                    {
+
+                    }
+                    else
+                    {
+                        Speak_Listen.Speak("You haven't selected any item.");
                     }
                     break;
                 default:                                     //  Number input
@@ -479,6 +647,7 @@ namespace ProjectNetra
                     break;
             }
         }
+
     }
 
     

@@ -31,14 +31,17 @@
             <ComboBoxItem>.avi</ComboBoxItem>
         </ComboBox>
         <Button x:Name="FilterBtn"  Background="Blue" Content="Filter" HorizontalAlignment="Left" Height="36" Margin="805,0,0,0" VerticalAlignment="Top" Width="85" Click="ButtonFilterActivate" Foreground="#FF072744"/>
-        <Button Content="+ New Folder" HorizontalAlignment="Left" Height="32" Margin="0,100,0,0" VerticalAlignment="Top" Width="102" Foreground="#FF1C3A0B" Background="#FF58D312"/>
+        <Button x:Name="NF1" Content="+ New Folder" HorizontalAlignment="Left" Height="32" Margin="0,100,0,0" VerticalAlignment="Top" Width="140" Foreground="#FF1C3A0B" Background="#FF58D312" Click="ButtonNewFolderBtn" />
         <Button x:Name="ROBtn"  Content="Read Out" HorizontalAlignment="Left" Height="36" Margin="411,0,0,0" VerticalAlignment="Top" Width="72" Foreground="#FF1ACF75" Background="#FF072744" Click="ButtonReadOut"/>
-        <Button Content="+ New File" HorizontalAlignment="Left" Height="32" Margin="0,137,0,0" VerticalAlignment="Top" Width="102" Foreground="#FF1C3A0B" Background="#FF58D312"/>
-        <Button Content="- Delete Folder" HorizontalAlignment="Left" Height="32" Margin="0,174,0,0" VerticalAlignment="Top" Width="102" Foreground="#FF072744" Background="#FFD32C12"/>
-        <Button Content="- Delete File" HorizontalAlignment="Left" Height="32" Margin="0,211,0,0" VerticalAlignment="Top" Width="102" Foreground="#FF072744" Background="#FFD32C12"/>
-        <Button Background="Blue" Content="Rename Folder" HorizontalAlignment="Left" Height="32" Margin="0,248,0,0" VerticalAlignment="Top" Width="102" Foreground="#FF072744"/>
-        <Button Background="Blue" Content="Rename File" HorizontalAlignment="Left" Height="32" Margin="0,285,0,0" VerticalAlignment="Top" Width="102" Foreground="#FF072744"/>
+        <Button x:Name="NF2" Content="+ New File" HorizontalAlignment="Left" Height="32" Margin="0,137,0,0" VerticalAlignment="Top" Width="140" Foreground="#FF1C3A0B" Background="#FF58D312" Click="ButtonNewFileBtn" />
+        <Button x:Name="DF1" Content="- Delete Folder" HorizontalAlignment="Left" Height="32" Margin="0,174,0,0" VerticalAlignment="Top" Width="140" Foreground="#FF072744" Background="#FFD32C12" Click="ButtonDeleteFolderBtn" />
+        <Button x:Name="DF2" Content="- Delete File" HorizontalAlignment="Left" Height="32" Margin="0,211,0,0" VerticalAlignment="Top" Width="140" Foreground="#FF072744" Background="#FFD32C12" Click="ButtonDeleteFileBtn" />
+        <Button x:Name="RNF1" Background="Blue" Content="Rename Folder" HorizontalAlignment="Left" Height="32" Margin="0,248,0,0" VerticalAlignment="Top" Width="140" Foreground="#FF072744" Click="ButtonRenameFolderBtn" />
+        <Button x:Name="RNF2" Background="Blue" Content="Rename File" HorizontalAlignment="Left" Height="32" Margin="0,285,0,0" VerticalAlignment="Top" Width="140" Foreground="#FF072744" Click="ButtonRenameFileBtn" />
         <Button x:Name="ControlsBtn"  Content="Controls" HorizontalAlignment="Left" Height="36" Margin="483,0,0,0" VerticalAlignment="Top" Width="67" Foreground="#FF1ACF75" Background="#FF072744" Click="ButtonControls"/>
+        <Border x:Name="BORDER" BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Left" Height="39" Margin="0,41,0,0" VerticalAlignment="Top" Width="140">
+            <TextBox x:Name="TB1" Text="Textbox" TextAlignment="Center" FontSize="16" Margin="0" Padding="0,5,0,0"/>
+        </Border>
 
     </Grid>
 </Window>
