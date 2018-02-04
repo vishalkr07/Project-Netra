@@ -63,6 +63,68 @@ namespace ProjectNetra
             MainFrame.Navigate(fmp);
         }
 
+        private void CreateDirectory(string dirName)
+        {
+            string pathString = System.IO.Path.Combine(pD.FullName, dirName);
+            if (System.IO.Directory.Exists(pathString))
+            {
+                Debug.WriteLine("Directory Already Present");
+                return;
+            }
+            System.IO.Directory.CreateDirectory(pathString);
+        }
+
+        private void CreateFile(string fileName)
+        {
+            string pathString = System.IO.Path.Combine(pD.FullName, fileName);
+            if (System.IO.File.Exists(pathString))
+            {
+                Debug.WriteLine("Directory Already Present");
+                return;
+            }
+            System.IO.File.Create(fileName);
+        }
+
+        private void DeleteFile(string pathString)
+        {
+            if (System.IO.File.Exists(pathString))
+            {
+                System.IO.File.Delete(pathString);
+                return;
+            }
+        }
+
+        private void DeleteDirectory(string pathString)
+        {
+            if (System.IO.Directory.Exists(pathString))
+            {
+                System.IO.Directory.Delete(pathString);
+                return;
+            }
+        }
+
+        private void RenameDirectory(string dirName, string pathString)
+        {
+            string newPathString = System.IO.Path.Combine(pD.FullName, dirName);
+            if (System.IO.Directory.Exists(newPathString))
+            {
+                Debug.WriteLine("Directory Already present");
+                return;
+            }
+            System.IO.Directory.Move(pathString, newPathString);
+        }
+
+        private void RenameFile(string fileName, string pathString)
+        {
+            string newPathString = System.IO.Path.Combine(pD.FullName, fileName);
+            if (System.IO.File.Exists(newPathString))
+            {
+                Debug.WriteLine("File Name Already Present");
+                return;
+            }
+            System.IO.File.Move(pathString, newPathString);
+        }
+
         public Tuple<int,int> GetItemRange()
         {
             return new Tuple<int, int>(firstItemNo,lastItemNo);
