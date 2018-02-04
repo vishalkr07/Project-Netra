@@ -19,8 +19,15 @@ namespace ProjectNetra
     /// <summary>
     /// Interaction logic for File_Manager.xaml
     /// </summary>
+    /*
+     *  DEBUG-HINTS:
+     *  -----------
+     *  NOTE 1: While making an object of this class, the "ComboBox_SelectionChanged" event is triggered on the calling of the "InitializeComponent()" in the Constructor of this class.
+     *          -------> Write Code Keeping that in mind.
+     */
     public partial class File_Manager : Window
     {
+        private Dictionary<string, int> cbItem = new Dictionary<string, int>();             // For retireving comboboxitem no. for a specific comboboxitem
         private File_Manager_Page fmp = null; 
         private LinkedList<File_Manager_Page> ll = new LinkedList<File_Manager_Page>();
         private LinkedListNode<File_Manager_Page> llnode = null,temp = null, nxt = null;
@@ -30,16 +37,29 @@ namespace ProjectNetra
         private int noOfItems = 0;                                                          // Tracks no. of items displayed in the GUI
         private DirectoryInfo pD = null;
         private bool isFilterActive = false;
+        private string filter = "*";
 
         public File_Manager()
         {
             InitializeComponent();
-            
+
+            cbItem["None"] = 1;
+            cbItem[".pdf"]= 2;
+            cbItem[".txt"]= 3;
+            cbItem[".doc"] = 4;
+            cbItem[".docx"] = 5;
+            cbItem[".mp3"] = 6;
+            cbItem[".mp4"] = 7;
+            cbItem[".wav"] = 8;
+            cbItem[".wmv"] = 9;
+            cbItem[".mpeg"] = 10;
+            cbItem[".avi"] = 11;
+
             fmp = new File_Manager_Page();
-            B.IsEnabled = N.IsEnabled = false;
-            UpdateMembers("");
             ll.AddFirst(fmp);
             llnode = ll.First;
+            B.IsEnabled = N.IsEnabled = false;
+            UpdateMembers("");
             MainFrame.Navigate(fmp);
         }
 
@@ -63,69 +83,85 @@ namespace ProjectNetra
             U.IsEnabled = (firstItemNo != 1) || ((isFolder==2) && (firstItemNo == 1) && (noOfFolders != 0));
             D.IsEnabled = ((isFolder == 1) && ((lastItemNo < noOfFolders) || (noOfFiles != 0))) || ((isFolder == 2) && (lastItemNo < noOfFiles));
             O.IsEnabled = (isFolder != 0);
+            FilterBtn.IsEnabled = (pD!=null);
+            filter = fmp.GetFilterStatus();
+            filter = (filter == "*" ? "None" : filter.Substring(1));
+            ((ComboBoxItem)DropDown.Items[cbItem[filter]-1]).IsSelected = true;     // ComboBox_SelectionChanged Event is Triggered
+            UpdateFilter(false);
             fmp.ReadOutListItems(parentDir,B.IsEnabled, N.IsEnabled, U.IsEnabled, D.IsEnabled, F.IsEnabled, F.Content.ToString());
         }
-
+        private void UpdateFilter(bool b)
+        {
+            isFilterActive = b;
+            if (b)
+                FilterBtn.Background = Brushes.GreenYellow;
+            else
+                FilterBtn.Background = Brushes.OrangeRed;
+            DropDown.IsEnabled = b;
+        }
         private void ButtonBack(object sender, RoutedEventArgs e)
         {
-            Back();
+            Instruct("Back");
         }
         private void ButtonNext(object sender, RoutedEventArgs e)
         {
-            Next();
+            Instruct("Next");
         }
         private void ButtonRefresh(object sender, RoutedEventArgs e)
         {
-            Repeat();
+            Instruct("Repeat");
         }
         private void ButtonOpen(object sender, RoutedEventArgs e)
         {
-            Open(fmp.GetSelectedItemNo());            
+            Instruct((fmp.GetSelectedItemNo() - 1 + firstItemNo).ToString());            
         }
         private void ButtonUp(object sender, RoutedEventArgs e)
         {
-            Up();
+            Instruct("Up");
         }
         private void ButtonDown(object sender, RoutedEventArgs e)
         {
-            Down();
+            Instruct("Down");
         }
         private void ButtonFileFolder(object sender, RoutedEventArgs e)
         {
-            FileOrFolder();
+            Instruct(F.Content.ToString());
         }
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Filter(DropDown.SelectedIndex + 1);
+            Debug.WriteLine("Combobox Event Triggered");
+            if(isFilterActive)                                          // This is actually true when an ComboBoxItem is selected from GUI by clicking
+                Instruct((DropDown.SelectedIndex + 1).ToString());
         }
         private void KeyDownHandler(object sender, KeyEventArgs e)
         {
             if(e.Key == Key.Enter)
-                Open(fmp.GetSelectedItemNo());
+            {
+                if (isFilterActive)
+                    Instruct((DropDown.SelectedIndex + 1).ToString());
+                else
+                    Instruct(fmp.GetSelectedItemNo().ToString());
+            }
+                
         }
         private void ButtonFilterActivate(object sender, RoutedEventArgs e)
         {
-            isFilterActive = true;
+            Instruct("Filter");
         }
 
         public void Back()
         {
-            /*** revert the filter selection to none  **/
-            CB1.IsSelected = true;                       // ComboBox_SelectionChanged event will be triggered
-            /********************************/
             llnode = llnode.Previous;
             fmp = llnode.Value;
             N.IsEnabled = true;
             B.IsEnabled = (llnode.Previous != null);
             UpdateMembers("");
+            Debug.WriteLine("Inside Back ---------> IsFilterActive  "+isFilterActive);
             MainFrame.Navigate(fmp);
         }
 
         public void Next()
         {
-            /*** revert the filter selection to none  **/
-            CB1.IsSelected = true;                      // ComboBox_SelectionChanged event will be triggered
-            /********************************/
             llnode = llnode.Next;
             fmp = llnode.Value;
             B.IsEnabled = true;
@@ -247,19 +283,22 @@ namespace ProjectNetra
         public void Instruct(string cmd)
         {
             Debug.WriteLine("File Manager Input:  " + cmd);
-            firstItemNo = fmp.GetFirstItemNo();
-            lastItemNo = fmp.GetLastItemNo();
+            if (fmp != null)
+            {
+                firstItemNo = fmp.GetFirstItemNo();
+                lastItemNo = fmp.GetLastItemNo();
+            }            
             switch (cmd)
             {
                 case "Back":
-                    isFilterActive = false;
+                    UpdateFilter(false);
                     if (B.IsEnabled)
                         Back();         
                     else
                         Speak_Listen.Speak("Sorry, No such control is present");
                     break;
                 case "Next":
-                    isFilterActive = false;
+                    UpdateFilter(false);
                     if (N.IsEnabled)
                         Next(); 
                     else
@@ -276,14 +315,14 @@ namespace ProjectNetra
                         Repeat();
                     break;
                 case "Up":
-                    isFilterActive = false;
+                    UpdateFilter(false);
                     if (U.IsEnabled)
                         Up();
                     else
                         Speak_Listen.Speak("Sorry, No such control is present");
                     break;
                 case "Down":
-                    isFilterActive = false;
+                    UpdateFilter(false);
                     if (D.IsEnabled)
                         Down();
                     else
@@ -291,7 +330,7 @@ namespace ProjectNetra
                     break;
                 case "Files":                    
                 case "Folders":
-                    isFilterActive = false;
+                    UpdateFilter(false);
                     if (F.IsEnabled)
                     {
                         if (cmd == F.Content.ToString())
@@ -307,17 +346,25 @@ namespace ProjectNetra
                         Speak_Listen.Speak("Sorry, No such control is present");
                     else
                     {
-                        isFilterActive = true;
+                        UpdateFilter(true);
                         ReadOutFilters();
                         firstItemNo = 1;
                         lastItemNo = 11;
                     }
                     break;
                 default:                                     //  Number input
+                    int n = int.Parse(cmd);
                     if (isFilterActive)                      //  Number input for filters
                     {
-                        Filter(int.Parse(cmd));
-                        isFilterActive = false;
+                        if (n>=1 && n <= 11)                 // In range
+                        {
+                            UpdateFilter(false);
+                            Filter(n);
+                        }
+                        else                                 // Out of range
+                        {
+                            Speak_Listen.Speak("Wrong option. Say a number from 1 to 11.");
+                        }
                     }
                     else                                     //  Number input for file/folder selection
                     {
@@ -327,17 +374,14 @@ namespace ProjectNetra
                         }
                         else
                         {
-                            /*
-                            if (number[cmd] > noOfItems)          // Item no. selected is not actually present in the list
+                            if ((n<firstItemNo) || (n>lastItemNo))          // Item no. selected is not actually present in the list
                             {
-                                Speak_Listen.Speak("Sorry, wrong choice. Say a number from 1 to " + noOfItems.ToString());
+                                Speak_Listen.Speak("Wrong option. Say a number from "+ firstItemNo.ToString() + " to " + lastItemNo.ToString());
                             }
-                            else
+                            else                                            // In Range
                             {
-                                Open(number[cmd]);
-                            }*/
-
-                            Open((((int.Parse(cmd))-1)%10) + 1);
+                                Open(((n - 1) % 10) + 1);
+                            }
                         }
                     }
                     break;

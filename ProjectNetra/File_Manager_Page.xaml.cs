@@ -37,7 +37,7 @@ namespace ProjectNetra
         private Dictionary<string, FileInfo> dictFiles = new Dictionary<string, FileInfo>();                // Used to reference to the files that the user selects 
         private short isFolder = 1;                                                                         // Will have 3 values: 0 -> none, 1->folder, 2->file
         private int firstItemNo = 1,lastItemNo = 0;                                                         // Tracks the first and last item no. of the set of items currently being displayed in GUI 
-        private string filter = "";
+        private string filter = "";                                                                     
         private DirectoryInfo pD = null;
 
         public File_Manager_Page()                                      // To be invoked only for getting the Drives and Special Folders
@@ -87,6 +87,7 @@ namespace ProjectNetra
             UpdateStackPanel();
 
             lastItemNo = dirs.Count();
+            filter = "*";
         }
 
         public File_Manager_Page(DirectoryInfo dir)                        // To be invoked for getting the contents within a Folder/Drive
@@ -105,6 +106,11 @@ namespace ProjectNetra
             dictFiles.Clear();
         }
 
+        private void Initialize()
+        {
+            firstItemNo = 1;
+            lastItemNo = 0;
+        }
         private void UpdateStackPanel()
         {
             SP1.Children.Clear();
@@ -135,6 +141,10 @@ namespace ProjectNetra
         public short GetFolderStatus()
         {
             return isFolder;
+        }
+        public string GetFilterStatus()
+        {
+            return filter;
         }
         public void SetFolderStatus(bool isfolder)
         {
@@ -207,13 +217,13 @@ namespace ProjectNetra
         public void Filter(string pat)
         {
             Debug.WriteLine("Testing Filter1:    "+pat);
-            if (pat == filter)
-                return;
             if (pat == "None")
                 pat = "";
             pat = "*" + pat;
-
+            if (pat == filter)
+                return;
             Debug.WriteLine("Testing Filter2:    " + pat);
+            Initialize();
             RetrieveSubfolders(pat);
             RetrieveFiles(pat);
             
@@ -365,14 +375,28 @@ namespace ProjectNetra
             Speak_Listen.StartPromptBuilder();
             if (parentDir != "")
                 Speak_Listen.AddPrompt(parentDir + " is Opened");
+            if (filter != "*")
+            {
+                string s = filter.Substring(1);
+                Speak_Listen.AddPrompt("Filtering " + s + " items");
+                if(isFolder!=0 &&(isFolder == 1 || dirs.Count==0))
+                {
+                    Speak_Listen.AddPrompt("This folder contains "+ dirs.Count + " " + s +" folders and "+ fileList.Count + " " + s + " files.");
+                }
+            }
             if (isFolder==0)
-                Speak_Listen.AddPrompt("Sorry, this folder is empty");
+            {
+                if(filter == "*")
+                    Speak_Listen.AddPrompt("Sorry, this folder is empty");
+                else
+                    Speak_Listen.AddPrompt("Sorry, this folder has no " + filter.Substring(1) + " items");
+            }                
             else
             {
-                                
+                      
                 if (isFolder == 1)
                 {
-                    if (firstItemNo == 1)
+                    if (firstItemNo == 1 && filter=="*")
                     {
                         if (isBack)
                             Speak_Listen.AddPrompt("There is a total of " + dirs.Count.ToString() + " folders and " + fileList.Count.ToString() + " files in this directory.");
@@ -382,8 +406,10 @@ namespace ProjectNetra
                     if (isBack)      
                         Speak_Listen.AddPrompt("Here is the list of folders from " + firstItemNo.ToString() + " to " + lastItemNo.ToString());
                 }
-                else
+                else                                    // Files
+                {
                     Speak_Listen.AddPrompt("Here is the list of files from " + firstItemNo.ToString() + " to " + lastItemNo.ToString());
+                }
 
                 int len = items.Count;
                 for(int i = 1; i<=len; i++)
