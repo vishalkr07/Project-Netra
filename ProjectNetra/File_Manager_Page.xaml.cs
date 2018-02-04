@@ -370,11 +370,42 @@ namespace ProjectNetra
             }
 
         }
-        public void ReadOutListItems(string parentDir,bool isBack, bool isNext, bool isUp, bool isDown, bool isFF , string ff)
+
+        public void AcknowlwdgeOpen()
+        {
+            string s;
+            if (pD == null)
+                s = "File Manager Home";
+            else
+                s = pD.Name;
+            Speak_Listen.Speak( s + " is Opened");
+        }
+        public void ReadOutControls(bool isBack, bool isNext, bool isUp, bool isDown, bool isFF, string ff)
         {
             Speak_Listen.StartPromptBuilder();
-            if (parentDir != "")
-                Speak_Listen.AddPrompt(parentDir + " is Opened");
+            if (isBack)
+                Speak_Listen.AddPrompt("Say Back to go back");
+            if (isNext)
+                Speak_Listen.AddPrompt("Say Next to go forward");
+            if (isUp)
+                Speak_Listen.AddPrompt("Say Up to move up the list");
+            if (isDown)
+                Speak_Listen.AddPrompt("Say Down to move down the list");
+            if (isFF)
+                Speak_Listen.AddPrompt("Say " + ff + " to dictate the " + ff);
+            
+            Speak_Listen.AddPrompt("Say Refresh to refresh the list");
+            Speak_Listen.AddPrompt("Say Read Out to dictate the list");
+            Speak_Listen.AddPrompt("Say Controls to dictate the available controls");
+
+            if (pD != null)
+                Speak_Listen.AddPrompt("Say Filter to filter the list");
+
+            Speak_Listen.SpeakPrompt();
+        }
+        public void ReadOutListItems()
+        {
+            Speak_Listen.StartPromptBuilder();
             if (filter != "*")
             {
                 string s = filter.Substring(1);
@@ -398,12 +429,12 @@ namespace ProjectNetra
                 {
                     if (firstItemNo == 1 && filter=="*")
                     {
-                        if (isBack)
+                        if (pD!=null)
                             Speak_Listen.AddPrompt("There is a total of " + dirs.Count.ToString() + " folders and " + fileList.Count.ToString() + " files in this directory.");
                         else      // Indicates "This PC" part
                             Speak_Listen.AddPrompt("There is a total of " + (dirs.Count - 5).ToString() + " drives and 5 special folders in your Computer.");
                     }
-                    if (isBack)      
+                    if (pD!=null)      
                         Speak_Listen.AddPrompt("Here is the list of folders from " + firstItemNo.ToString() + " to " + lastItemNo.ToString());
                 }
                 else                                    // Files
@@ -417,20 +448,6 @@ namespace ProjectNetra
                     Speak_Listen.AddPrompt("Number " + i.ToString() + ", " + items[i-1].Folder);
                 }
             }
-            if (isBack)
-                Speak_Listen.AddPrompt("Say Back to go back");
-            if (isNext)
-                Speak_Listen.AddPrompt("Say Next to go forward");
-            if (isUp)
-                Speak_Listen.AddPrompt("Say Up to move up the list");
-            if (isDown)
-                Speak_Listen.AddPrompt("Say Down to move down the list");
-            if (isFF)
-                Speak_Listen.AddPrompt("Say " + ff + " to dictate the " + ff);
-            if (pD != null)
-                Speak_Listen.AddPrompt("Say Filter to filter the list");
-            
-            Speak_Listen.AddPrompt("Say Repeat to repeat the list");
             Speak_Listen.SpeakPrompt();
         }
         

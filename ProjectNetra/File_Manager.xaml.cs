@@ -10,7 +10,6 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.Diagnostics;
 using System.IO;
 
@@ -19,12 +18,7 @@ namespace ProjectNetra
     /// <summary>
     /// Interaction logic for File_Manager.xaml
     /// </summary>
-    /*
-     *  DEBUG-HINTS:
-     *  -----------
-     *  NOTE 1: While making an object of this class, the "ComboBox_SelectionChanged" event is triggered on the calling of the "InitializeComponent()" in the Constructor of this class.
-     *          -------> Write Code Keeping that in mind.
-     */
+
     public partial class File_Manager : Window
     {
         private Dictionary<string, int> cbItem = new Dictionary<string, int>();             // For retireving comboboxitem no. for a specific comboboxitem
@@ -59,70 +53,8 @@ namespace ProjectNetra
             ll.AddFirst(fmp);
             llnode = ll.First;
             B.IsEnabled = N.IsEnabled = false;
-            UpdateMembers("");
+            UpdateMembers(true);
             MainFrame.Navigate(fmp);
-        }
-
-        private void CreateDirectory(string dirName)
-        {
-            string pathString = System.IO.Path.Combine(pD.FullName, dirName);
-            if (System.IO.Directory.Exists(pathString))
-            {
-                Debug.WriteLine("Directory Already Present");
-                return;
-            }
-            System.IO.Directory.CreateDirectory(pathString);
-        }
-
-        private void CreateFile(string fileName)
-        {
-            string pathString = System.IO.Path.Combine(pD.FullName, fileName);
-            if (System.IO.File.Exists(pathString))
-            {
-                Debug.WriteLine("Directory Already Present");
-                return;
-            }
-            System.IO.File.Create(fileName);
-        }
-
-        private void DeleteFile(string pathString)
-        {
-            if (System.IO.File.Exists(pathString))
-            {
-                System.IO.File.Delete(pathString);
-                return;
-            }
-        }
-
-        private void DeleteDirectory(string pathString)
-        {
-            if (System.IO.Directory.Exists(pathString))
-            {
-                System.IO.Directory.Delete(pathString);
-                return;
-            }
-        }
-
-        private void RenameDirectory(string dirName, string pathString)
-        {
-            string newPathString = System.IO.Path.Combine(pD.FullName, dirName);
-            if (System.IO.Directory.Exists(newPathString))
-            {
-                Debug.WriteLine("Directory Already present");
-                return;
-            }
-            System.IO.Directory.Move(pathString, newPathString);
-        }
-
-        private void RenameFile(string fileName, string pathString)
-        {
-            string newPathString = System.IO.Path.Combine(pD.FullName, fileName);
-            if (System.IO.File.Exists(newPathString))
-            {
-                Debug.WriteLine("File Name Already Present");
-                return;
-            }
-            System.IO.File.Move(pathString, newPathString);
         }
 
         public Tuple<int,int> GetItemRange()
@@ -130,7 +62,8 @@ namespace ProjectNetra
             return new Tuple<int, int>(firstItemNo,lastItemNo);
         }
 
-        private void UpdateMembers(string parentDir)                      // parentDir != "", if Open() is called; parentDir indicates Parent Directory name
+        // bool ack ---> determines whether to give acknowledgement on opening a folder; if(ack == True) ---> Back() | Next() | Open() has been called or Home page is opened.
+        private void UpdateMembers(bool ack)
         {
             isFolder = fmp.GetFolderStatus();
             firstItemNo = fmp.GetFirstItemNo();
@@ -150,7 +83,8 @@ namespace ProjectNetra
             filter = (filter == "*" ? "None" : filter.Substring(1));
             ((ComboBoxItem)DropDown.Items[cbItem[filter]-1]).IsSelected = true;     // ComboBox_SelectionChanged Event is Triggered
             UpdateFilter(false);
-            fmp.ReadOutListItems(parentDir,B.IsEnabled, N.IsEnabled, U.IsEnabled, D.IsEnabled, F.IsEnabled, F.Content.ToString());
+            if(ack)
+                fmp.AcknowlwdgeOpen();
         }
         private void UpdateFilter(bool b)
         {
@@ -158,8 +92,14 @@ namespace ProjectNetra
             if (b)
                 FilterBtn.Background = Brushes.GreenYellow;
             else
-                FilterBtn.Background = Brushes.OrangeRed;
+                FilterBtn.Background = Brushes.Blue;
             DropDown.IsEnabled = b;
+        }
+
+
+        private void ButtonOpen(object sender, RoutedEventArgs e)
+        {
+            Instruct((fmp.GetSelectedItemNo() - 1 + firstItemNo).ToString());
         }
         private void ButtonBack(object sender, RoutedEventArgs e)
         {
@@ -169,14 +109,6 @@ namespace ProjectNetra
         {
             Instruct("Next");
         }
-        private void ButtonRefresh(object sender, RoutedEventArgs e)
-        {
-            Instruct("Repeat");
-        }
-        private void ButtonOpen(object sender, RoutedEventArgs e)
-        {
-            Instruct((fmp.GetSelectedItemNo() - 1 + firstItemNo).ToString());            
-        }
         private void ButtonUp(object sender, RoutedEventArgs e)
         {
             Instruct("Up");
@@ -184,6 +116,18 @@ namespace ProjectNetra
         private void ButtonDown(object sender, RoutedEventArgs e)
         {
             Instruct("Down");
+        }
+        private void ButtonRefresh(object sender, RoutedEventArgs e)
+        {
+            Instruct("Refresh");
+        }
+        private void ButtonReadOut(object sender, RoutedEventArgs e)
+        {
+            Instruct("Read Out");
+        }
+        private void ButtonControls(object sender, RoutedEventArgs e)
+        {
+            Instruct("Controls");
         }
         private void ButtonFileFolder(object sender, RoutedEventArgs e)
         {
@@ -210,32 +154,52 @@ namespace ProjectNetra
         {
             Instruct("Filter");
         }
+        
 
-        public void Back()
+        private void Back()
         {
             llnode = llnode.Previous;
             fmp = llnode.Value;
             N.IsEnabled = true;
             B.IsEnabled = (llnode.Previous != null);
-            UpdateMembers("");
+            UpdateMembers(true);
             Debug.WriteLine("Inside Back ---------> IsFilterActive  "+isFilterActive);
             MainFrame.Navigate(fmp);
         }
-
-        public void Next()
+        private void Next()
         {
             llnode = llnode.Next;
             fmp = llnode.Value;
             B.IsEnabled = true;
             N.IsEnabled = (llnode.Next != null);
-            UpdateMembers("");
+            UpdateMembers(true);
             MainFrame.Navigate(fmp);
         }
-        public void Repeat()
+        private void Up()
         {
+            fmp.MoveWithinList(true);
+            UpdateMembers(false);
+        }
+        private void Down()
+        {
+            fmp.MoveWithinList(false);
+            UpdateMembers(false);
+        }
+        private void FileOrFolder()
+        {
+            fmp.SetFolderStatus(F.Content.ToString() == "Folders");
+            UpdateMembers(false);
+        }
+        private void Refresh()
+        {
+            if (pD != null)
+                llnode.Value = new File_Manager_Page(pD);
+            else
+                llnode.Value = new File_Manager_Page();
+            fmp = llnode.Value;
             B.IsEnabled = (llnode.Previous != null);
             N.IsEnabled = (llnode.Next != null);
-            UpdateMembers("");
+            UpdateMembers(true);
             MainFrame.Navigate(fmp);
         }
         private void Filter(int index)
@@ -243,9 +207,9 @@ namespace ProjectNetra
             if (fmp == null || pD == null)                            // Occurs when the File_Manager() constructor is called
                 return;
             fmp.Filter(((ComboBoxItem)(DropDown.Items[index - 1])).Content.ToString());
-            UpdateMembers("");
+            UpdateMembers(false);
         }
-        public void Open(int selectedItemNo)
+        private void Open(int selectedItemNo)
         {
             if(selectedItemNo == 0)
             {
@@ -272,7 +236,7 @@ namespace ProjectNetra
                 fmp = llnode.Value;
                 B.IsEnabled = true;
                 N.IsEnabled = false;
-                UpdateMembers(dI.Name);
+                UpdateMembers(true);
                 MainFrame.Navigate(fmp);
             }
             else
@@ -313,35 +277,81 @@ namespace ProjectNetra
             }
                         
         }
+        private void CreateDirectory(string dirName)
+        {
+            string pathString = Path.Combine(pD.FullName, dirName);
+            if (Directory.Exists(pathString))
+            {
+                Debug.WriteLine("Directory Already Present");
+                return;
+            }
+            Directory.CreateDirectory(pathString);
+        }
+        private void CreateFile(string fileName)
+        {
+            string pathString = Path.Combine(pD.FullName, fileName);
+            if (File.Exists(pathString))
+            {
+                Debug.WriteLine("Directory Already Present");
+                return;
+            }
+            File.Create(fileName);
+        }
+        private void DeleteFile(string pathString)
+        {
+            if (File.Exists(pathString))
+            {
+                File.Delete(pathString);
+                return;
+            }
+        }
+        private void DeleteDirectory(string pathString)
+        {
+            if (Directory.Exists(pathString))
+            {
+                Directory.Delete(pathString);
+                return;
+            }
+        }
+        private void RenameDirectory(string dirName, string pathString)
+        {
+            string newPathString = Path.Combine(pD.FullName, dirName);
+            if (Directory.Exists(newPathString))
+            {
+                Debug.WriteLine("Directory Already present");
+                return;
+            }
+            Directory.Move(pathString, newPathString);
+        }
+        private void RenameFile(string fileName, string pathString)
+        {
+            string newPathString = Path.Combine(pD.FullName, fileName);
+            if (File.Exists(newPathString))
+            {
+                Debug.WriteLine("File Name Already Present");
+                return;
+            }
+            File.Move(pathString, newPathString);
+        }
 
-        public void Up()
-        {
-            fmp.MoveWithinList(true);
-            UpdateMembers("");
-        }
-        public void Down()
-        {
-            fmp.MoveWithinList(false);
-            UpdateMembers("");
-        }
-        public void FileOrFolder()
-        {
-            fmp.SetFolderStatus(F.Content.ToString()=="Folders");
-            UpdateMembers("");
-        }
 
+        private void ReadOutControls()
+        {
+            fmp.ReadOutControls(B.IsEnabled, N.IsEnabled, U.IsEnabled, D.IsEnabled, F.IsEnabled, F.Content.ToString());
+        }
         private void ReadOutFilters()
         {
             Speak_Listen.StartPromptBuilder();
             for (int i = 1; i < 12;i++)
             {
-                //string s = ((ComboBoxItem)DropDown.ItemContainerGenerator.ContainerFromIndex(i)).Content.ToString();
                 string s = ((ComboBoxItem)(DropDown.Items[i - 1])).Content.ToString();
                 Speak_Listen.AddPrompt("Say "+ (i.ToString()) + " to filter " + s);
             }
             Speak_Listen.AddPrompt("Say Repeat to repeat the list");
             Speak_Listen.SpeakPrompt();
         }
+
+
         public void Instruct(string cmd)
         {
             Debug.WriteLine("File Manager Input:  " + cmd);
@@ -349,7 +359,19 @@ namespace ProjectNetra
             {
                 firstItemNo = fmp.GetFirstItemNo();
                 lastItemNo = fmp.GetLastItemNo();
-            }            
+            }
+
+            Speak_Listen.Speak("");                                 // Tricky way to interrupt the file manager Voice Output
+
+            /* 
+             *  READ THIS CAREFULLY BEFORE YOU ADD NEW case in switch
+             *  =====================================================
+             *  
+             *  NOTE 1:- Add this function at the start of your case(if it has nothing to do with variable "isFilterActive"):
+             *  ------
+             *              UpdateFilter(false);
+             */
+
             switch (cmd)
             {
                 case "Back":
@@ -366,16 +388,6 @@ namespace ProjectNetra
                     else
                         Speak_Listen.Speak("Sorry, No such control is present");
                     break;
-                case "Repeat":
-                    if (isFilterActive)
-                    {
-                        ReadOutFilters();
-                        firstItemNo = 1;
-                        lastItemNo = 11;
-                    }
-                    else
-                        Repeat();
-                    break;
                 case "Up":
                     UpdateFilter(false);
                     if (U.IsEnabled)
@@ -390,18 +402,36 @@ namespace ProjectNetra
                     else
                         Speak_Listen.Speak("Sorry, No such control is present");
                     break;
-                case "Files":                    
+                case "Files":
                 case "Folders":
                     UpdateFilter(false);
                     if (F.IsEnabled)
                     {
-                        if (cmd == F.Content.ToString())
+                        if (cmd == F.Content.ToString())                    // If this is the same content as wrtten on the Button F.
                             FileOrFolder();
                         else
-                            Repeat();
+                            fmp.ReadOutListItems();
                     }
                     else
                         Speak_Listen.Speak("Sorry, No such control is present");
+                    break;
+                case "Refresh":
+                    UpdateFilter(false);
+                    Refresh();
+                    break;
+                case "Read Out":
+                    if (isFilterActive)
+                    {
+                        ReadOutFilters();
+                        firstItemNo = 1;            // For Dynamic Loading of Grammar in "Speak_Listen" class
+                        lastItemNo = 11;            // For Dynamic Loading of Grammar in "Speak_Listen" class
+                    }
+                    else
+                        fmp.ReadOutListItems();
+                    break;
+                case "Controls":
+                    UpdateFilter(false);
+                    ReadOutControls();
                     break;
                 case "Filter":
                     if (pD == null)                          // If this is the home page of the file manager

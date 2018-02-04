@@ -92,8 +92,11 @@ namespace ProjectNetra
             "Down",
             "Files",
             "Folders",
-            "Repeat",
-            "Filter"
+            "Refresh",
+            "Read Out",
+            "Controls",
+            "Filter",
+            
         };
 
         public static string[] GetNoGrammer(int l, int r)
