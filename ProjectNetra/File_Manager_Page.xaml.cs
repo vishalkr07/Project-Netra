@@ -172,6 +172,16 @@ namespace ProjectNetra
         {
             return (LB.SelectedIndex + 1);
         }
+        public void SelectItem(int n)
+        {
+            LB.SelectedIndex = n - firstItemNo;
+            string s;
+            if (isFolder == 1)
+                s = dictFolder[items[n - 1].Folder].Name;
+            else
+                s = dictFiles[items[n - 1].Folder].Name;
+            Speak_Listen.Speak(s + " is selected.");
+        }
         public DirectoryInfo GetParentDirectory()
         {
             return pD;
@@ -409,7 +419,6 @@ namespace ProjectNetra
             if (filter != "*")
             {
                 string s = filter.Substring(1);
-                Speak_Listen.AddPrompt("Filtering " + s + " items");
                 if(isFolder!=0 &&(isFolder == 1 || dirs.Count==0))
                 {
                     Speak_Listen.AddPrompt("This folder contains "+ dirs.Count + " " + s +" folders and "+ fileList.Count + " " + s + " files.");

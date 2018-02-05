@@ -96,6 +96,11 @@ namespace ProjectNetra
             "Read Out",
             "Controls",
             "Filter",
+            "New Folder",
+            "New File",
+            "Delete",
+            "Rename",
+            "Open"
             
         };
 

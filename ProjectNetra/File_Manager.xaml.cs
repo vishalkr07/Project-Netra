@@ -21,7 +21,7 @@ namespace ProjectNetra
 
     public partial class File_Manager : Window
     {
-        private List<char> notAllowedCharacters = new List<char>(new char[] { '/','\\','"','|',':','?','<','>','*',' ' });
+        private List<char> notAllowedCharacters = new List<char>(new char[] { '/','\\','"','|',':','?','<','>','*' });
         private Dictionary<string, int> cbItem = new Dictionary<string, int>();             // For retireving comboboxitem no. for a specific comboboxitem
         private File_Manager_Page fmp = null; 
         private LinkedList<File_Manager_Page> ll = new LinkedList<File_Manager_Page>();
@@ -31,7 +31,8 @@ namespace ProjectNetra
         private int noOfFiles = 0, noOfFolders = 0;                                         // Tracks the no. of files/folders in the current directory 
         private int noOfItems = 0;                                                          // Tracks no. of items displayed in the GUI
         private DirectoryInfo pD = null;
-        private bool isFilterActive = false,isNewFolder = false;
+        private bool isFilterActive = false;
+        private short modifyListStatus = 0;                                                 // modifyListStatus = 0(None),1(New Folder),2(New File),3(Delete),4(Rename)
         private string filter = "*";
 
         public File_Manager()
@@ -63,15 +64,40 @@ namespace ProjectNetra
         {
             return new Tuple<int, int>(firstItemNo,lastItemNo);
         }
-        private bool Validate(string s)
+        private bool Valid(string s)
         {
-            s = s.Trim(new char[] { ' ' });
-            if (s.Length == 0)
+            if (s.Trim(new char[] { ' ' }).Length == 0)
                 return false;
             foreach(var c in notAllowedCharacters)
             {
                 if (s.Contains(c))
                     return false;
+            }
+            return true;
+        }
+        private bool ValidateWithAcknowlwdgement(string s,bool fo)                             // s => name of file/folder; (f == true) => folder, else file
+        {
+            string item = (fo?"folder":"file");
+            if (!Valid(s))
+            {
+                Speak_Listen.StartPromptBuilder();
+                Speak_Listen.AddPrompt("A "+item+" name can't contain any of these characters:");
+                Speak_Listen.AddPrompt("Forward slash, Backslash, Pipe, Quote, Colon, Question Mark, Less Than, Greater Than, Asterisk");
+                Speak_Listen.AddPrompt("A "+ item + " can't contain only spaces. There has to be atleast one allowed character with space.");
+                Speak_Listen.AddPrompt("Please type again");
+                Speak_Listen.SpeakPrompt();
+                TB1.Text = "";
+                return false;
+            }
+            if (fo)
+                return true;
+            // Regular Expression (for File Format): Any name with atleast one letter in [a-z,A-Z,0-9] before "." and atleast one letter in [a-z,A-Z,0-9] after "." 
+            Regex regex = new Regex(@"^[a-zA-Z0-9]+\.[a-zA-Z0-9]+$");
+            if (!regex.IsMatch(s))
+            {
+                Speak_Listen.Speak("File name can't be without an extension.");
+                TB1.Text = "";
+                return false;
             }
             return true;
         }
@@ -96,7 +122,7 @@ namespace ProjectNetra
             D.IsEnabled = ((isFolder == 1) && ((lastItemNo < noOfFolders) || (noOfFiles != 0))) || ((isFolder == 2) && (lastItemNo < noOfFiles));
             O.IsEnabled = (isFolder != 0);
             FilterBtn.IsEnabled = (pD!=null);
-            NF1.IsEnabled = NF2.IsEnabled = DF1.IsEnabled = DF2.IsEnabled = RNF1.IsEnabled = RNF2.IsEnabled = (pD!=null);
+            NF1.IsEnabled = NF2.IsEnabled = DF1.IsEnabled = RNF1.IsEnabled  = (pD!=null);
             ((ComboBoxItem)DropDown.Items[cbItem[filter]-1]).IsSelected = true;     // ComboBox_SelectionChanged Event is Triggered
 
             UpdateFilter(false);
@@ -117,7 +143,7 @@ namespace ProjectNetra
 
         private void ButtonOpen(object sender, RoutedEventArgs e)
         {
-            Instruct((fmp.GetSelectedItemNo() - 1 + firstItemNo).ToString());
+            Instruct("Open");
         }
         private void ButtonBack(object sender, RoutedEventArgs e)
         {
@@ -165,15 +191,22 @@ namespace ProjectNetra
                     Instruct((DropDown.SelectedIndex + 1).ToString());
                 else if (TB1.IsEnabled)
                 {
-                    if (isNewFolder)
+                    if (modifyListStatus == 1)
                         CreateDirectory(TB1.Text);
-                    else
+                    else if(modifyListStatus == 2)
                         CreateFile(TB1.Text);
+                    else if(modifyListStatus == 4)
+                    {
+                        if (isFolder == 1)
+                            RenameDirectory(TB1.Text,fmp.GetSelectedFolder(fmp.GetSelectedItemNo()).Name);
+                        else                                // isFolder == 2 ; isFolder==0 not possible to reach here
+                            RenameFile(TB1.Text, fmp.GetSelectedFile(fmp.GetSelectedItemNo()).Name);
+                    }
+
                 }
                 else 
-                    Instruct(fmp.GetSelectedItemNo().ToString());
-
-                R.Focus();
+                    Instruct("Open");
+                
             }
                 
         }
@@ -189,24 +222,15 @@ namespace ProjectNetra
         {
             Instruct("New File");
         }
-
-        private void ButtonDeleteFolderBtn(object sender, RoutedEventArgs e)
+        private void ButtonDeleteBtn(object sender, RoutedEventArgs e)
         {
-            Instruct("Delete Folder");
-        }
-        private void ButtonDeleteFileBtn(object sender, RoutedEventArgs e)
-        {
-            Instruct("Delete File");
-        }
-        private void ButtonRenameFolderBtn(object sender, RoutedEventArgs e)
-        {
-            Instruct("Rename Folder");
-        }
-        private void ButtonRenameFileBtn(object sender, RoutedEventArgs e)
-        {
-            Instruct("Rename File");
+            Instruct("Delete");
         }
 
+        private void ButtonRenameBtn(object sender, RoutedEventArgs e)
+        {
+            Instruct("Rename");
+        }
 
         private void Back()
         {
@@ -258,8 +282,10 @@ namespace ProjectNetra
         {
             if (fmp == null || pD == null)                            // Occurs when the File_Manager() constructor is called
                 return;
-            fmp.Filter(((ComboBoxItem)(DropDown.Items[index - 1])).Content.ToString());
+            string s = ((ComboBoxItem)(DropDown.Items[index - 1])).Content.ToString();
+            fmp.Filter(s);
             UpdateMembers(false);
+            Speak_Listen.Speak("Filter is set to "+s);
         }
         private void Open(int selectedItemNo)
         {
@@ -331,98 +357,111 @@ namespace ProjectNetra
         }
         private void CreateDirectory(string dirName)
         {
-            if (!Validate(dirName))
-            {
-                /*
-                 *  TODO 1: Most of the chars in"notAllowedCharacters" are not recognised by SpeechSynthesis. Try to hardcode is.
-                 */
-                Speak_Listen.StartPromptBuilder();
-                Speak_Listen.AddPrompt("A folder name can't contain any of these characters:");
-                foreach (var c in notAllowedCharacters)
-                    Speak_Listen.AddPrompt(c+"");
-                Speak_Listen.AddPrompt("Please type again");
-                Speak_Listen.SpeakPrompt();
+            if (!ValidateWithAcknowlwdgement(dirName, true))
                 return;
-            }
             string pathString = Path.Combine(pD.FullName, dirName);
             if (Directory.Exists(pathString))
             {
                 Debug.WriteLine("Directory Already Present");
-                Speak_Listen.Speak("Sorry, Folder Already Exists.");
+                Speak_Listen.Speak("Sorry,a folder named " + dirName + " already exists. Please type again.");
+                TB1.Text = "";
                 return;
             }
             Directory.CreateDirectory(pathString);
             Refresh();
-            Speak_Listen.Speak("A new folder named "+dirName+" is created.");
+            TB1.Text = "";
+            BORDER.BorderBrush = Brushes.Gray;
+            TB1.IsEnabled = false;
+            Speak_Listen.Speak("A new folder named "+dirName+" is created successfully.");
+            modifyListStatus = 0;
         }
         private void CreateFile(string fileName)
         {
-            // Regular Expression (for File Format): Any name with atleast one letter in [a-z,A-Z,0-9] before "." and atleast one letter in [a-z,A-Z,0-9] after "." 
-            Regex regex = new Regex(@"^[a-zA-Z0-9]+\.[a-zA-Z0-9]+$");      
-            if (!Validate(fileName))
-            {
-                /*
-                 *  TODO 1: Most of the chars in"notAllowedCharacters" are not recognised by SpeechSynthesis. Try to hardcode is.
-                 */
-                Speak_Listen.StartPromptBuilder();
-                Speak_Listen.AddPrompt("A file name can't contain any of these characters:");
-                foreach (var c in notAllowedCharacters)
-                    Speak_Listen.AddPrompt(c + "");
-                Speak_Listen.AddPrompt("Please type again");
-                Speak_Listen.SpeakPrompt();
+            if (!ValidateWithAcknowlwdgement(fileName, false))
                 return;
-            }
-            if (!regex.IsMatch(fileName))
-            {
-                Speak_Listen.Speak("File name can't be without an extension.");
-                return;
-            }
             string pathString = Path.Combine(pD.FullName, fileName);
             if (File.Exists(pathString))
             {
                 Debug.WriteLine("File Already Present");
-                Speak_Listen.Speak("Sorry, File Already Exists.");
+                Speak_Listen.Speak("Sorry, a file named "+fileName+" already exists. Please type again.");
+                TB1.Text = "";
                 return;
             }
             File.Create(pathString);
             Refresh();
-            Speak_Listen.Speak("A new file named " + fileName + " is created.");
+            TB1.Text = "";
+            BORDER.BorderBrush = Brushes.Gray;
+            TB1.IsEnabled = false;
+            Speak_Listen.Speak("A new file named " + fileName + " is created successfully.");
+            modifyListStatus = 0;
         }
-        private void DeleteFile(string pathString)
+        private void DeleteFile(string fileName)
         {
+            string pathString = Path.Combine(pD.FullName, fileName);
             if (File.Exists(pathString))
             {
                 File.Delete(pathString);
+                Refresh();
+                Speak_Listen.Speak("The file named " + fileName + " is deleted successfully");
                 return;
             }
+            Speak_Listen.Speak("Sorry, the file has been removed by an unknown source.");
+            modifyListStatus = 0;
         }
-        private void DeleteDirectory(string pathString)
+        private void DeleteDirectory(string dirName)
         {
+            string pathString = Path.Combine(pD.FullName, dirName);
             if (Directory.Exists(pathString))
             {
                 Directory.Delete(pathString);
+                Refresh();
+                Speak_Listen.Speak("The folder named "+dirName+" is deleted successfully");
                 return;
             }
+            Speak_Listen.Speak("Sorry, the folder has been removed by an unknown source.");
+            modifyListStatus = 0;
         }
-        private void RenameDirectory(string dirName, string pathString)
+        private void RenameDirectory(string newDirName, string oldDirName)
         {
-            string newPathString = Path.Combine(pD.FullName, dirName);
+            if (!ValidateWithAcknowlwdgement(newDirName, true))
+                return;
+            string newPathString = Path.Combine(pD.FullName, newDirName);
+            string oldPathString = Path.Combine(pD.FullName, oldDirName);
             if (Directory.Exists(newPathString))
             {
                 Debug.WriteLine("Directory Already present");
+                Speak_Listen.Speak("A Folder named "+newDirName+" already exists. Please type again.");
+                TB1.Text = "";
                 return;
             }
-            Directory.Move(pathString, newPathString);
+            Directory.Move(oldPathString, newPathString);
+            Refresh();
+            TB1.Text = "";
+            BORDER.BorderBrush = Brushes.Gray;
+            TB1.IsEnabled = false;
+            Speak_Listen.Speak("The folder "+oldDirName+ " is renamed to "+newDirName+" successfully.");
+            modifyListStatus = 0;
         }
-        private void RenameFile(string fileName, string pathString)
+        private void RenameFile(string newFileName, string oldFileName)
         {
-            string newPathString = Path.Combine(pD.FullName, fileName);
+            if (!ValidateWithAcknowlwdgement(newFileName, false))
+                return;
+            string newPathString = Path.Combine(pD.FullName, newFileName);
+            string oldPathString = Path.Combine(pD.FullName, oldFileName);
             if (File.Exists(newPathString))
             {
                 Debug.WriteLine("File Name Already Present");
+                Speak_Listen.Speak("A Folder named " + newFileName + " already exists. Please type again.");
+                TB1.Text = "";
                 return;
             }
-            File.Move(pathString, newPathString);
+            File.Move(oldPathString, newPathString);
+            Refresh();
+            TB1.Text = "";
+            BORDER.BorderBrush = Brushes.Gray;
+            TB1.IsEnabled = false;
+            Speak_Listen.Speak("The file " + oldFileName + " is renamed to " + newFileName + " successfully.");
+            modifyListStatus = 0;
         }
 
 
@@ -540,9 +579,9 @@ namespace ProjectNetra
                     break;
                 case "New Folder":
                     UpdateFilter(false);
-                    isNewFolder = true;
                     if (NF1.IsEnabled)
                     {
+                        modifyListStatus = 1;
                         BORDER.BorderBrush = Brushes.Yellow;
                         Speak_Listen.Speak("Type the name of the new folder.");
                         TB1.IsEnabled = true;
@@ -553,9 +592,9 @@ namespace ProjectNetra
                     break;
                 case "New File":
                     UpdateFilter(false);
-                    isNewFolder = false;
                     if (NF2.IsEnabled)
                     {
+                        modifyListStatus = 2;
                         BORDER.BorderBrush = Brushes.Yellow;
                         Speak_Listen.Speak("Type the name of the new file.");
                         TB1.IsEnabled = true;
@@ -564,53 +603,48 @@ namespace ProjectNetra
                     else
                         Speak_Listen.Speak("Sorry, No such control is present");
                     break;
-                case "Delete Folder":
+                case "Delete":
                     UpdateFilter(false);
-                    int sel = fmp.GetSelectedItemNo() - 1 + firstItemNo;
-                    if (sel >= firstItemNo && sel <= lastItemNo)
+                    if (DF1.IsEnabled)
                     {
-
+                        int sel = fmp.GetSelectedItemNo();
+                        if (sel == 0)
+                            Speak_Listen.Speak("You haven't selected any item.");
+                        else
+                        {
+                            modifyListStatus = 3;
+                            if (isFolder == 1)
+                                DeleteDirectory(fmp.GetSelectedFolder(sel).Name);
+                            else                                // isFolder == 2; isFolder == 0 not possible to reach here
+                                DeleteFile(fmp.GetSelectedFile(sel).Name);
+                        }
                     }
                     else
-                    {
-                        Speak_Listen.Speak("You haven't selected any item.");
-                    }
+                        Speak_Listen.Speak("Sorry, No such control is present");
+                    
                     break;
-                case "Delete File":
+                case "Rename":
                     UpdateFilter(false);
-                    sel = fmp.GetSelectedItemNo() - 1 + firstItemNo;
-                    if (sel >= firstItemNo && sel <= lastItemNo)
+                    if (RNF1.IsEnabled)
                     {
-
+                        int sel = fmp.GetSelectedItemNo();
+                        if (sel == 0)
+                            Speak_Listen.Speak("You haven't selected any item.");
+                        else
+                        {
+                            modifyListStatus = 4;
+                            BORDER.BorderBrush = Brushes.Yellow;
+                            Speak_Listen.Speak("Type the new name of the item selected");
+                            TB1.IsEnabled = true;
+                            TB1.Focus();
+                        }
                     }
                     else
-                    {
-                        Speak_Listen.Speak("You haven't selected any item.");
-                    }
+                        Speak_Listen.Speak("Sorry, No such control is present");
                     break;
-                case "Rename Folder":
+                case "Open":
                     UpdateFilter(false);
-                    sel = fmp.GetSelectedItemNo() - 1 + firstItemNo;
-                    if (sel >= firstItemNo && sel <= lastItemNo)
-                    {
-
-                    }
-                    else
-                    {
-                        Speak_Listen.Speak("You haven't selected any item.");
-                    }
-                    break;
-                case "Rename File":
-                    UpdateFilter(false);
-                    sel = fmp.GetSelectedItemNo() - 1 + firstItemNo;
-                    if (sel >= firstItemNo && sel <= lastItemNo)
-                    {
-
-                    }
-                    else
-                    {
-                        Speak_Listen.Speak("You haven't selected any item.");
-                    }
+                    Open(fmp.GetSelectedItemNo());
                     break;
                 default:                                     //  Number input
                     int n = int.Parse(cmd);
@@ -640,7 +674,7 @@ namespace ProjectNetra
                             }
                             else                                            // In Range
                             {
-                                Open(((n - 1) % 10) + 1);
+                                fmp.SelectItem(n);
                             }
                         }
                     }
